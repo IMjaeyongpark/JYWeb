@@ -29,7 +29,6 @@ public class MainService {
     public ResponseEntity newUser(UserDTO form){
 
         User user = new User();
-        user.setUserId(form.getUserId());
         user.setLoginId(form.getLoginId());
         user.setPassword(form.getPassword());
         user.setNickname(form.getNickname());
