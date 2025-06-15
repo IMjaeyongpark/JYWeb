@@ -4,8 +4,8 @@ import MyWeb.JYWeb.DTO.UserDTO;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,9 +14,11 @@ public class MainService {
 
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    MainService(UserRepository userRepository){
+    MainService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -26,16 +28,14 @@ public class MainService {
     }
 
     //회원가입 사용자 정보 저장
-    public ResponseEntity newUser(UserDTO form){
+    public void registerUser(UserDTO form){
 
         User user = new User();
         user.setLoginId(form.getLoginId());
-        user.setPassword(form.getPassword());
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
         user.setNickname(form.getNickname());
 
         userRepository.save(user);
 
-
-        return ResponseEntity.ok().build();
     }
 }
