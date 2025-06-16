@@ -2,6 +2,7 @@ package MyWeb.JYWeb.service;
 
 import MyWeb.JYWeb.DTO.UserDTO;
 import MyWeb.JYWeb.domain.User;
+import MyWeb.JYWeb.exception.DuplicateLoginIdException;
 import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,10 @@ public class MainService {
 
     //회원가입 사용자 정보 저장
     public void registerUser(UserDTO form){
+
+        if (userRepository.existsByLoginId(form.getLoginId())) {
+            throw new DuplicateLoginIdException("이미 사용 중인 아이디입니다.");
+        }
 
         User user = new User();
         user.setLoginId(form.getLoginId());
