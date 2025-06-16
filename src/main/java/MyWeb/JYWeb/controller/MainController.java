@@ -5,10 +5,7 @@ import MyWeb.JYWeb.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MainController {
@@ -35,4 +32,13 @@ public class MainController {
 
         return ResponseEntity.ok("회원가입 성공");
     }
+
+    //아이디 중복 확인
+    @GetMapping("/check-id")
+    public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestParam String loginId) {
+        boolean isDuplicate = mainService.isLoginIdDuplicate(loginId);
+        return ResponseEntity.ok(isDuplicate); // true면 중복
+    }
+
+
 }

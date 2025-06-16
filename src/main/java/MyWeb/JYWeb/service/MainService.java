@@ -38,4 +38,9 @@ public class MainService {
         userRepository.save(user);
 
     }
+
+    //아이디 중복 확인
+    public boolean isLoginIdDuplicate(String loginId) {
+        return userRepository.existsByLoginId(loginId);
+    }
 }
