@@ -1,4 +1,4 @@
-package MyWeb.JYWeb.exception;
+package MyWeb.JYWeb.exception.custom;
 
 //아이디 중복 예외 처리
 public class DuplicateLoginIdException extends RuntimeException{

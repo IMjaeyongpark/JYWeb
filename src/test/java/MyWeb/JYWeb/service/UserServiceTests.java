@@ -3,7 +3,7 @@ package MyWeb.JYWeb.service;
 
 import MyWeb.JYWeb.DTO.UserDTO;
 import MyWeb.JYWeb.domain.User;
-import MyWeb.JYWeb.exception.DuplicateLoginIdException;
+import MyWeb.JYWeb.exception.custom.DuplicateLoginIdException;
 import MyWeb.JYWeb.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
