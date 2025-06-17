@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-public class MainService {
+public class UserService {
 
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    MainService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -32,7 +32,7 @@ public class MainService {
     public void registerUser(UserDTO form){
 
         if (userRepository.existsByLoginId(form.getLoginId())) {
-            throw new DuplicateLoginIdException("이미 사용 중인 아이디입니다.");
+            throw new DuplicateLoginIdException();
         }
 
         User user = new User();
@@ -47,5 +47,10 @@ public class MainService {
     //아이디 중복 확인
     public boolean isLoginIdDuplicate(String loginId) {
         return userRepository.existsByLoginId(loginId);
+    }
+
+    //닉네임 중복 확인
+    public boolean isNicknameDuplicate(String nickname) {
+        return userRepository.existsByNickname(nickname);
     }
 }
