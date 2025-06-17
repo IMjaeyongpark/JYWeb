@@ -1,5 +1,8 @@
 package MyWeb.JYWeb.DTO;
 
+import lombok.Getter;
+
+@Getter
 public class TokenResponse {
     private String accessToken;
     private String refreshToken;

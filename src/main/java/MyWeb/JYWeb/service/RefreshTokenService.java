@@ -1,5 +1,6 @@
 package MyWeb.JYWeb.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +10,7 @@ import java.time.Duration;
 public class RefreshTokenService {
     private final RedisTemplate<String, String> redisTemplate;
 
-    public RefreshTokenService(RedisTemplate redisTemplate){
+    public RefreshTokenService(@Qualifier("redisTemplate")RedisTemplate redisTemplate){
         this.redisTemplate = redisTemplate;
     }
 
