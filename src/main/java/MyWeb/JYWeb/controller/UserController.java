@@ -4,6 +4,7 @@ import MyWeb.JYWeb.DTO.LoginRequestDTO;
 import MyWeb.JYWeb.DTO.RefreshRequestDTO;
 import MyWeb.JYWeb.DTO.TokenResponse;
 import MyWeb.JYWeb.DTO.UserDTO;
+import MyWeb.JYWeb.exception.custom.ValidateLoginException;
 import MyWeb.JYWeb.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +43,15 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequestDTO loginRequest, HttpServletRequest request) {
 
+        log.info("받은 loginId={}, password={}", loginRequest.getLoginId(), loginRequest.getPassword());
+
         TokenResponse tokenResponse = userService.validateUser(loginRequest);
 
         log.info("로그인 성공: loginId={} from IP={}", loginRequest.getLoginId(), request.getRemoteAddr());
 
         return ResponseEntity.ok(tokenResponse);
     }
+
 
     //리프레시 토큰 재발급
     @PostMapping("/refresh")

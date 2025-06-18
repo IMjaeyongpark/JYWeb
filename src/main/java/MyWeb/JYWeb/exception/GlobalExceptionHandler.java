@@ -35,6 +35,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ValidateLoginException.class)
     public ResponseEntity<ErrorResponse> handleValidateLoginException(ValidateLoginException e){
 
+
         log.warn("로그인 실패: {}", e.getMessage());
 
         ErrorResponse error = new ErrorResponse(

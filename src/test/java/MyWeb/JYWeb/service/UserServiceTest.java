@@ -87,7 +87,7 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = LoginRequestDTO.builder().loginId(loginId).password(password).build();
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
 
         //when
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
@@ -104,18 +104,11 @@ public class UserServiceTest {
         //given
         String loginId1 = "testuser";
         String password1 = "1234_fail";
-        LoginRequestDTO loginRequestDTO1 = LoginRequestDTO.builder()
-                .loginId(loginId1)
-                .password(password1)
-                .build();
+        LoginRequestDTO loginRequestDTO1 = new LoginRequestDTO(loginId1, password1);
 
         String loginId2 = "test";
         String password2 = "1234_fail";
-        LoginRequestDTO loginRequestDTO2 = LoginRequestDTO
-                .builder()
-                .loginId(loginId2)
-                .password(password2)
-                .build();
+        LoginRequestDTO loginRequestDTO2 = new LoginRequestDTO(loginId2, password2);
 
         //when && then
         assertThrows(ValidateLoginException.class, () -> userService.validateUser(loginRequestDTO1));
@@ -129,10 +122,7 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = LoginRequestDTO
-                .builder()
-                .loginId(loginId).
-                password(password).build();
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
 
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
 
@@ -159,10 +149,7 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = LoginRequestDTO
-                .builder()
-                .loginId(loginId).
-                password(password).build();
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
 
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
 
@@ -181,10 +168,7 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = LoginRequestDTO
-                .builder()
-                .loginId(loginId).
-                password(password).build();
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
 
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
 
