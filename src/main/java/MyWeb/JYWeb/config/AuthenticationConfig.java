@@ -18,27 +18,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class AuthenticationConfig {
 
-
     private final UserService userService;
 
     @Value("${jwt.secret}")
     private String secretKey;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .requestMatchers("/**").permitAll()//허용
-                //.requestMatchers("/**").authenticated()//인증 필요
+                .requestMatchers(
+                        "/user/login",
+                        "/user/test",
+                        "/user/register",
+                        "/user/checkNickname",
+                        "/user/checkId"
+                ).permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                //.addFilterBefore(new JwtFilter(userService,secretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(userService, secretKey), UsernamePasswordAuthenticationFilter.class)
                 .build();
-
     }
 }
+

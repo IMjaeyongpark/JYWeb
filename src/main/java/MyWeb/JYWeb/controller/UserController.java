@@ -76,14 +76,14 @@ public class UserController {
 
     //아이디 중복 확인
     @GetMapping("/checkId")
-    public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestParam String loginId) {
+    public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestParam("loginId") String loginId) {
         boolean isDuplicate = userService.isLoginIdDuplicate(loginId);
         return ResponseEntity.ok(isDuplicate); // true면 중복
     }
 
     //닉네입 중복 확인
     @GetMapping("/checkNickname")
-    public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestParam String nickname) {
+    public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
         boolean isDuplicate = userService.isNicknameDuplicate(nickname);
         return ResponseEntity.ok(isDuplicate); // true면 중복
     }
