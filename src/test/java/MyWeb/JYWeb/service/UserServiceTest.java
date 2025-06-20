@@ -2,6 +2,7 @@ package MyWeb.JYWeb.service;
 
 
 import MyWeb.JYWeb.DTO.LoginRequestDTO;
+import MyWeb.JYWeb.DTO.RefreshRequestDTO;
 import MyWeb.JYWeb.DTO.TokenResponse;
 import MyWeb.JYWeb.DTO.UserDTO;
 import MyWeb.JYWeb.domain.User;
@@ -132,8 +133,10 @@ public class UserServiceTest {
             e.printStackTrace();
         }
 
+        RefreshRequestDTO refreshRequestDTO = new RefreshRequestDTO(loginId, tokenResponse.getRefreshToken());
+
         //when
-        TokenResponse newToken = userService.refreshAccessToken(loginId, tokenResponse.getRefreshToken());
+        TokenResponse newToken = userService.refreshAccessToken(refreshRequestDTO);
 
 
         //then
@@ -156,9 +159,11 @@ public class UserServiceTest {
         //when
         redisTemplate.delete(loginId);
 
+        RefreshRequestDTO refreshRequestDTO = new RefreshRequestDTO(loginId, tokenResponse.getRefreshToken());
+
 
         //then
-        assertThrows(UnauthorizedException.class,()->userService.refreshAccessToken(loginId, tokenResponse.getRefreshToken()));
+        assertThrows(UnauthorizedException.class,()->userService.refreshAccessToken(refreshRequestDTO));
 
     }
 

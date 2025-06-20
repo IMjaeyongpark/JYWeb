@@ -1,6 +1,7 @@
 package MyWeb.JYWeb.service;
 
 import MyWeb.JYWeb.DTO.LoginRequestDTO;
+import MyWeb.JYWeb.DTO.RefreshRequestDTO;
 import MyWeb.JYWeb.DTO.TokenResponse;
 import MyWeb.JYWeb.DTO.UserDTO;
 import MyWeb.JYWeb.Util.JwtUtil;
@@ -90,7 +91,9 @@ public class UserService {
 
 
     //엑세스 토큰 재발급
-    public TokenResponse refreshAccessToken(String loginId, String refreshToken) {
+    public TokenResponse refreshAccessToken(RefreshRequestDTO refreshRequestDTO) {
+        String loginId = refreshRequestDTO.getLoginId();
+        String refreshToken = refreshRequestDTO.getRefreshToken();
 
         String savedToken = refreshTokenService.getRefreshToken(loginId);
 

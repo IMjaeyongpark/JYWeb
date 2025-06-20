@@ -56,10 +56,7 @@ public class UserController {
     //리프레시 토큰 재발급
     @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refreshAccessToken(@RequestBody RefreshRequestDTO refreshRequestDTO) {
-        TokenResponse tokenResponse = userService.refreshAccessToken(
-                refreshRequestDTO.getLoginId(),
-                refreshRequestDTO.getRefreshToken()
-        );
+        TokenResponse tokenResponse = userService.refreshAccessToken(refreshRequestDTO);
 
         log.info("리프레시 토큰 재발급: {}", refreshRequestDTO.getLoginId());
 
