@@ -5,13 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshRequestDTO {
-    private String loginId;
-    private String refreshToken;
+public class BoardCreateRequestDTO {
 
+    private String title;
+
+    private String content;
+
+    private Long user_id;
 
 }

@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshRequestDTO {
-    private String loginId;
-    private String refreshToken;
-
-
+public class CommentCreateRequestDTO {
+    private Long boardId;
+    private String content;
+    private Long userId;
 }
+

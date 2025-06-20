@@ -4,7 +4,7 @@ package MyWeb.JYWeb.service;
 import MyWeb.JYWeb.DTO.LoginRequestDTO;
 import MyWeb.JYWeb.DTO.RefreshRequestDTO;
 import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.UserDTO;
+import MyWeb.JYWeb.DTO.RegisterRequestDTO;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.DuplicateLoginIdException;
 import MyWeb.JYWeb.exception.custom.UnauthorizedException;
@@ -49,7 +49,7 @@ public class UserServiceTest {
     @DisplayName("회원가입 성공")
     public void register_success() {
         // given
-        UserDTO form = new UserDTO();
+        RegisterRequestDTO form = new RegisterRequestDTO();
         form.setLoginId("newuser");
         form.setPassword("password123");
         form.setNickname("닉네임");
@@ -73,7 +73,7 @@ public class UserServiceTest {
         user.setNickname("중복유저");
         userRepository.save(user);
 
-        UserDTO form = new UserDTO();
+        RegisterRequestDTO form = new RegisterRequestDTO();
         form.setLoginId("duplicate");
         form.setPassword("newpass");
         form.setNickname("새유저");

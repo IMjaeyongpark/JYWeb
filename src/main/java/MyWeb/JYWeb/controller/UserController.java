@@ -3,8 +3,7 @@ package MyWeb.JYWeb.controller;
 import MyWeb.JYWeb.DTO.LoginRequestDTO;
 import MyWeb.JYWeb.DTO.RefreshRequestDTO;
 import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.UserDTO;
-import MyWeb.JYWeb.exception.custom.ValidateLoginException;
+import MyWeb.JYWeb.DTO.RegisterRequestDTO;
 import MyWeb.JYWeb.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,7 @@ public class UserController {
 
     //회원가입 사용자 정보 저장
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserDTO form) {
+    public ResponseEntity<String> register(@RequestBody RegisterRequestDTO form) {
 
         userService.registerUser(form);
 

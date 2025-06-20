@@ -1,7 +1,9 @@
 package MyWeb.JYWeb.controller;
 
+
 import MyWeb.JYWeb.DTO.BoardCreateRequestDTO;
-import MyWeb.JYWeb.service.BoardService;
+import MyWeb.JYWeb.DTO.CommentCreateRequestDTO;
+import MyWeb.JYWeb.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,20 +12,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/comment")
 @Slf4j
-public class BoardController {
+public class CommentController {
 
-    private final BoardService boardService;
+    private final CommentService commentService;
 
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
+    public CommentController(CommentService commentService){
+        this.commentService = commentService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity createBoard(@RequestBody BoardCreateRequestDTO boardCreateRequestDTO){
+    public ResponseEntity createComment(@RequestBody CommentCreateRequestDTO commentCreateRequestDTO){
 
-        boardService.createBoard(boardCreateRequestDTO);
+        commentService.createComment(commentCreateRequestDTO);
 
         return ResponseEntity.ok().build();
     }

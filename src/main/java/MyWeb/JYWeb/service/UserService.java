@@ -3,7 +3,7 @@ package MyWeb.JYWeb.service;
 import MyWeb.JYWeb.DTO.LoginRequestDTO;
 import MyWeb.JYWeb.DTO.RefreshRequestDTO;
 import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.UserDTO;
+import MyWeb.JYWeb.DTO.RegisterRequestDTO;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.DuplicateLoginIdException;
@@ -40,7 +40,9 @@ public class UserService {
 
     private final RefreshTokenService refreshTokenService;
 
-    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
@@ -52,7 +54,7 @@ public class UserService {
     }
 
     //회원가입 사용자 정보 저장
-    public void registerUser(UserDTO form) {
+    public void registerUser(RegisterRequestDTO form) {
 
         log.info("회원가입 시도: {}", form.getLoginId());
 
@@ -113,7 +115,7 @@ public class UserService {
     }
 
     //리프레시 토큰 삭제
-    public void logout(String accessToken){
+    public void logout(String accessToken) {
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
         refreshTokenService.deleteRefreshToken(loginId);
     }
