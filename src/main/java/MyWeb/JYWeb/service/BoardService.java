@@ -2,8 +2,8 @@ package MyWeb.JYWeb.service;
 
 
 import MyWeb.JYWeb.DTO.BoardCreateRequest;
+import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
-import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.User;
@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -91,7 +90,7 @@ public class BoardService {
     //게시물 조회
     public Page<BoardResponse> getBoard(int pageNum, int pageSize ){
 
-        Page<BoardResponse> boardResponses = boardRepository.findByDeletedAtIsNull(
+        Page<BoardResponse> boardResponses = boardRepository.findAllByDeletedAtIsNull(
                 PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending()));
 
 
@@ -99,9 +98,29 @@ public class BoardService {
     }
 
     //게시물 내용 조회
-    public void getBoardContent(Long boardId){
+    public BoardDetailResponse getBoardDetail(Long boardId){
 
+        BoardDetailResponse boardDetailResponse = boardRepository.findByBoardId(boardId);
 
+        if(boardDetailResponse == null || boardDetailResponse.getDeletedAt() != null){
+            throw new BoardNotFoundException("존재하지 않는 게시물입니다.");
+        }
+
+        return boardDetailResponse;
+    }
+
+    //사용자 게시글 목록 가져오기
+    public Page<BoardResponse> getUserBoard(String accessToken, int pageNum, int pageSize){
+
+        String loginId = JwtUtil.getLoginId(accessToken, secretKey);
+
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new ValidateLoginException("사용자 없음"));
+
+        Page<BoardResponse> boardResponses = boardRepository.findAllByUserIdAndDeletedAtIsNull(user.getUserId(),
+                PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending()));
+
+        return boardResponses;
     }
 
 

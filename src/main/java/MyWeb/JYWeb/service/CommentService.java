@@ -21,11 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -101,13 +101,40 @@ public class CommentService {
     }
 
     //댓글 조회
-    public Page<CommentResponse> getComment(Long boardId, int pageNum, int pageSize ){
+    public List<CommentResponse> getComments(Long boardId, int pageNum, int pageSize ){
 
         Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending());
 
-        Page<CommentResponse> commentResponses = commentRepository.findByBoardIdAndDeletedAtIsNull(boardId, pageable);
+        Page<Comment> comments = commentRepository.findByBoardId(boardId, pageable);
 
-        return commentResponses;
+        List<CommentResponse> responseList = comments.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+
+        return responseList;
     }
+
+    //삭제된 댓글 내용 null 처리
+    public CommentResponse toDto(Comment comment) {
+        if (comment.getDeletedAt() != null) {
+            return new CommentResponse(
+                    comment.getCommentId(),
+                    null,
+                    null,
+                    null,
+                    comment.getParent() != null ? comment.getParent().getCommentId() : null,
+                    comment.getDeletedAt()
+            );
+        }
+        return new CommentResponse(
+                comment.getCommentId(),
+                comment.getContent(),
+                comment.getUser().getNickname(),
+                comment.getCreatedAt(),
+                comment.getParent() != null ? comment.getParent().getCommentId() : null,
+                null
+        );
+    }
+
 
 }

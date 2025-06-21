@@ -1,20 +1,28 @@
 package MyWeb.JYWeb.DTO;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 
 @Getter
 @AllArgsConstructor
-public class CommentResponse {
-    private Long commentId;
-    private String content;
-    private String userNickname;
-    private LocalDateTime createdAt;
-    private Long parentId;
-    private LocalDateTime deletedAt;
-}
+public class BoardDetailResponse {
+    private Long boardId;
 
+    private String title;
+
+    private String content;
+
+    private String userNickname;
+
+    private int viewCount;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    private LocalDateTime deletedAt;
+
+}

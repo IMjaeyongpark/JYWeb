@@ -23,11 +23,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.board.boardId = :boardId")
     int deleteAllByBoard(@Param("boardId") Long boardId);
 
-    //삭제되지 않은 댓글 조회
-    @Query("SELECT new MyWeb.JYWeb.DTO.CommentResponse(c.commentId, c.content, u.nickname, c.createdAt) " +
-            "FROM Comment c JOIN c.user u " +
-            "WHERE c.board.boardId = :boardId AND c.deletedAt IS NULL")
-    Page<CommentResponse> findByBoardIdAndDeletedAtIsNull(@Param("boardId") Long boardId, Pageable pageable);
+    //댓글 조회
+    @Query("SELECT c FROM Comment c JOIN c.user u WHERE c.board.boardId = :boardId")
+    Page<Comment> findByBoardId(@Param("boardId") Long boardId, Pageable pageable);
+
+
 
 
 

@@ -34,10 +34,10 @@ public class Board {
 
 
     @Column(nullable = false, updatable = false)
-    private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
+    private LocalDateTime createdAt = java.time.LocalDateTime.now();
 
     @Column(nullable = false)
-    private java.time.LocalDateTime updatedAt = java.time.LocalDateTime.now();
+    private LocalDateTime updatedAt = java.time.LocalDateTime.now();
 
     @Column
     private LocalDateTime deletedAt;
