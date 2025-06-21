@@ -36,10 +36,20 @@ public class BoardController {
         return ResponseEntity.ok("등록 완료");
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteBoard(@RequestParam("loginId") String loginId){
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId, HttpServletRequest request){
 
-        return ResponseEntity.ok().build();
+        String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
+        }
+
+        boardService.deleteBoard(boardId, accessToken);
+
+        return ResponseEntity.ok("삭제 완료");
     }
 
 }

@@ -8,11 +8,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter @Getter
+@NoArgsConstructor @AllArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -36,10 +34,6 @@ public class User {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-    }
-
-    public User(Long userId){
-        this.userId = userId;
     }
 
 }

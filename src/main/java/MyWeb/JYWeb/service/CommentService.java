@@ -8,6 +8,7 @@ import MyWeb.JYWeb.domain.Comment;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.BoardNotFoundException;
 import MyWeb.JYWeb.exception.custom.CommentNotFoundException;
+import MyWeb.JYWeb.exception.custom.UnauthorizedException;
 import MyWeb.JYWeb.exception.custom.ValidateLoginException;
 import MyWeb.JYWeb.repository.BoardRepository;
 import MyWeb.JYWeb.repository.CommentRepository;
@@ -16,6 +17,8 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -29,7 +32,9 @@ public class CommentService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
-    public CommentService(CommentRepository commentRepository, UserRepository userRepository, BoardRepository boardRepository) {
+    public CommentService(CommentRepository commentRepository,
+                          UserRepository userRepository,
+                          BoardRepository boardRepository) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.boardRepository = boardRepository;
@@ -64,6 +69,28 @@ public class CommentService {
 
         log.info("댓글 작성 등록: userId = {} boardId = {}", user.getUserId(), board.getBoardId());
 
+    }
+
+    //댓글 삭제
+    public void deleteComment(Long commentId, String accessToken) {
+        String loginId = JwtUtil.getLoginId(accessToken, secretKey);
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException());
+
+
+
+        if (!comment.getUser().getLoginId().equals(loginId)) {
+            throw new UnauthorizedException("삭제 권한이 없습니다.");
+        }
+
+        if(comment.getDeletedAt() == null) {
+            comment.setDeletedAt(LocalDateTime.now());
+            commentRepository.save(comment);
+        }
+
+
+        log.info("댓글 삭제 완료 : {}", comment.getCommentId());
     }
 
 }

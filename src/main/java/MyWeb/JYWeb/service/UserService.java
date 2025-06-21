@@ -78,17 +78,18 @@ public class UserService {
 
         Optional<User> user = userRepository.findByLoginId(loginRequest.getLoginId());
 
-        if (user.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
-            String accessToken = JwtUtil.creatAccessToken(user.get().getLoginId(), secretKey, accessTokenExpiredMs);
-            String refreshToken = JwtUtil.createRefreshToken(secretKey, refreshTokenExpiredMs);
-
-            //Redis에 refresh token 저장
-            refreshTokenService.saveRefreshToken(user.get().getLoginId(), refreshToken, refreshTokenExpiredMs);
-
-            return new TokenResponse(accessToken, refreshToken, loginRequest.getLoginId(), user.get().getNickname());
+        if (!user.isPresent() || !passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
+            throw new ValidateLoginException();
         }
 
-        throw new ValidateLoginException();
+        String accessToken = JwtUtil.creatAccessToken(user.get().getLoginId(), secretKey, accessTokenExpiredMs);
+        String refreshToken = JwtUtil.createRefreshToken(secretKey, refreshTokenExpiredMs);
+
+        //Redis에 refresh token 저장
+        refreshTokenService.saveRefreshToken(user.get().getLoginId(), refreshToken, refreshTokenExpiredMs);
+
+        return new TokenResponse(accessToken, refreshToken, loginRequest.getLoginId(), user.get().getNickname());
+
     }
 
 
@@ -99,19 +100,19 @@ public class UserService {
 
         String savedToken = refreshTokenService.getRefreshToken(loginId);
 
-        if (savedToken != null && savedToken.equals(refreshToken)) {
-
-            // 유저 정보 조회
-            User user = userRepository.findByLoginId(loginId)
-                    .orElseThrow(() -> new ValidateLoginException("사용자를 찾을 수 없습니다."));
-
-            // 액세스 토큰 새로 발급
-            String newAccessToken = JwtUtil.creatAccessToken(loginId, secretKey, accessTokenExpiredMs);
-
-            return new TokenResponse(newAccessToken, refreshToken, user.getLoginId(), user.getNickname());
+        if (savedToken == null || !savedToken.equals(refreshToken)) {
+            throw new UnauthorizedException();
         }
 
-        throw new UnauthorizedException();
+        // 유저 정보 조회
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new ValidateLoginException("사용자를 찾을 수 없습니다."));
+
+        // 액세스 토큰 새로 발급
+        String newAccessToken = JwtUtil.creatAccessToken(loginId, secretKey, accessTokenExpiredMs);
+
+        return new TokenResponse(newAccessToken, refreshToken, user.getLoginId(), user.getNickname());
+
     }
 
     //리프레시 토큰 삭제

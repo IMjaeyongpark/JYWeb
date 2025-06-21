@@ -38,5 +38,21 @@ public class CommentController {
         return ResponseEntity.ok("댓글 작성 완료");
     }
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId, HttpServletRequest request){
+
+        String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
+        }
+
+        commentService.deleteComment(commentId, accessToken);
+
+        return ResponseEntity.ok("삭제 완료");
+    }
+
 
 }

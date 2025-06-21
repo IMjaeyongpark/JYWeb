@@ -3,6 +3,10 @@ package MyWeb.JYWeb.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -25,19 +29,22 @@ public class Board {
     @Column(nullable = false)
     private int viewCount = 0;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+
     @Column(nullable = false, updatable = false)
     private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
 
     @Column(nullable = false)
     private java.time.LocalDateTime updatedAt = java.time.LocalDateTime.now();
 
+    @Column
+    private LocalDateTime deletedAt;
+
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = java.time.LocalDateTime.now();
-    }
-
-    public Board(Long boardId){
-        this.boardId = boardId;
     }
 
 
