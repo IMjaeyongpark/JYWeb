@@ -1,7 +1,10 @@
 package MyWeb.JYWeb.repository;
 
+import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.domain.Comment;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,19 +18,17 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("UPDATE Comment c SET c.deletedAt = :now WHERE c.board.boardId = :boardId")
     int softDeleteAllByBoard(@Param("boardId") Long boardId, @Param("now") LocalDateTime now);
 
-    //논리적 삭제(soft delete) - 대댓글 전체를 deletedAt 업데이트
-    @Modifying
-    @Query("UPDATE Comment c SET c.deletedAt = :now WHERE c.parent.commentId = :commentId")
-    int softDeleteAllByCommentId(@Param("commentId") Long commentId, @Param("now") LocalDateTime now);
-
     //물리적 삭제(진짜 삭제)
     @Modifying
     @Query("DELETE FROM Comment c WHERE c.board.boardId = :boardId")
     int deleteAllByBoard(@Param("boardId") Long boardId);
 
-    //물리적 삭제(진짜 삭제)
-    @Modifying
-    @Query("DELETE FROM Comment c WHERE c.parent.commentId = :commentId")
-    int deleteAllByCommentId(@Param("commentId") Long commentId);
+    //삭제되지 않은 댓글 조회
+    @Query("SELECT new MyWeb.JYWeb.DTO.CommentResponse(c.commentId, c.content, u.nickname, c.createdAt) " +
+            "FROM Comment c JOIN c.user u " +
+            "WHERE c.board.boardId = :boardId AND c.deletedAt IS NULL")
+    Page<CommentResponse> findByBoardIdAndDeletedAtIsNull(@Param("boardId") Long boardId, Pageable pageable);
+
+
 
 }

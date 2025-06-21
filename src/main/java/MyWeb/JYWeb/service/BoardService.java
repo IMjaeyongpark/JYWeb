@@ -2,6 +2,8 @@ package MyWeb.JYWeb.service;
 
 
 import MyWeb.JYWeb.DTO.BoardCreateRequest;
+import MyWeb.JYWeb.DTO.BoardResponse;
+import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.User;
@@ -14,6 +16,10 @@ import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -74,11 +80,28 @@ public class BoardService {
         }
 
         if(board.getDeletedAt() == null) {
+            board.setDeletedAt(LocalDateTime.now());
             commentRepository.softDeleteAllByBoard(boardId, LocalDateTime.now());
-            boardRepository.softDeleteByBoardId(boardId, LocalDateTime.now());
+            boardRepository.save(board);
         }
 
         log.info("게시글 삭제 완료 : {}", board.getBoardId());
+    }
+
+    //게시물 조회
+    public Page<BoardResponse> getBoard(int pageNum, int pageSize ){
+
+        Page<BoardResponse> boardResponses = boardRepository.findByDeletedAtIsNull(
+                PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending()));
+
+
+        return boardResponses;
+    }
+
+    //게시물 내용 조회
+    public void getBoardContent(Long boardId){
+
+
     }
 
 

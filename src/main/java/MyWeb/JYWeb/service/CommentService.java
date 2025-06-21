@@ -2,6 +2,7 @@ package MyWeb.JYWeb.service;
 
 
 import MyWeb.JYWeb.DTO.CommentCreateRequest;
+import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.Comment;
@@ -16,7 +17,13 @@ import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -91,6 +98,16 @@ public class CommentService {
 
 
         log.info("댓글 삭제 완료 : {}", comment.getCommentId());
+    }
+
+    //댓글 조회
+    public Page<CommentResponse> getComment(Long boardId, int pageNum, int pageSize ){
+
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending());
+
+        Page<CommentResponse> commentResponses = commentRepository.findByBoardIdAndDeletedAtIsNull(boardId, pageable);
+
+        return commentResponses;
     }
 
 }
