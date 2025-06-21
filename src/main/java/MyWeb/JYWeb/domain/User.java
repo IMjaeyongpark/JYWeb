@@ -1,7 +1,9 @@
 package MyWeb.JYWeb.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -34,7 +38,9 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    public User() {}
+    public User(Long userId){
+        this.userId = userId;
+    }
 
 }
 

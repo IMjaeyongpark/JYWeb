@@ -10,7 +10,7 @@ import lombok.*;
 @Table(name = "board")
 public class Board {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long boardId;
 
     @Column(nullable = false, length = 255)
     private String title;
@@ -35,5 +35,11 @@ public class Board {
     public void preUpdate() {
         this.updatedAt = java.time.LocalDateTime.now();
     }
+
+    public Board(Long boardId){
+        this.boardId = boardId;
+    }
+
+
 }
 

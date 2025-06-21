@@ -1,21 +1,20 @@
 package MyWeb.JYWeb.DTO;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardCreateRequestDTO {
-
-    private String title;
-
+public class CommentCreateRequest {
+    private Long boardId;
     private String content;
-
-    private Long user_id;
+    @Nullable
+    private Long parentId;
 
 }
+

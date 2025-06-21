@@ -1,9 +1,9 @@
 package MyWeb.JYWeb.service;
 
-import MyWeb.JYWeb.DTO.LoginRequestDTO;
-import MyWeb.JYWeb.DTO.RefreshRequestDTO;
+import MyWeb.JYWeb.DTO.LoginRequest;
+import MyWeb.JYWeb.DTO.RefreshRequest;
 import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.RegisterRequestDTO;
+import MyWeb.JYWeb.DTO.RegisterRequest;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.DuplicateLoginIdException;
@@ -54,7 +54,7 @@ public class UserService {
     }
 
     //회원가입 사용자 정보 저장
-    public void registerUser(RegisterRequestDTO form) {
+    public void registerUser(RegisterRequest form) {
 
         log.info("회원가입 시도: {}", form.getLoginId());
 
@@ -74,7 +74,7 @@ public class UserService {
     }
 
     //사용자 정보 확인
-    public TokenResponse validateUser(LoginRequestDTO loginRequest) {
+    public TokenResponse validateUser(LoginRequest loginRequest) {
 
         Optional<User> user = userRepository.findByLoginId(loginRequest.getLoginId());
 
@@ -93,9 +93,9 @@ public class UserService {
 
 
     //엑세스 토큰 재발급
-    public TokenResponse refreshAccessToken(RefreshRequestDTO refreshRequestDTO) {
-        String loginId = refreshRequestDTO.getLoginId();
-        String refreshToken = refreshRequestDTO.getRefreshToken();
+    public TokenResponse refreshAccessToken(RefreshRequest refreshRequest) {
+        String loginId = refreshRequest.getLoginId();
+        String refreshToken = refreshRequest.getRefreshToken();
 
         String savedToken = refreshTokenService.getRefreshToken(loginId);
 

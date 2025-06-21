@@ -1,8 +1,6 @@
 package MyWeb.JYWeb.exception;
 
-import MyWeb.JYWeb.exception.custom.DuplicateLoginIdException;
-import MyWeb.JYWeb.exception.custom.UnauthorizedException;
-import MyWeb.JYWeb.exception.custom.ValidateLoginException;
+import MyWeb.JYWeb.exception.custom.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +47,31 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e){
 
         log.warn("리프레시 토큰 인증 실패: {}", e.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                e.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+
+    @ExceptionHandler(BoardNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBoardNotFoundException(BoardNotFoundException e){
+
+        log.warn("게시글을 찾을 수 없음: {}", e.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                e.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCommentNotFoundException(CommentNotFoundException e){
+
+        log.warn("댓글을 찾을 수 없음: {}", e.getMessage());
 
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),

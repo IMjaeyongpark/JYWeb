@@ -1,12 +1,13 @@
 package MyWeb.JYWeb.controller;
 
-import MyWeb.JYWeb.DTO.LoginRequestDTO;
-import MyWeb.JYWeb.DTO.RefreshRequestDTO;
+import MyWeb.JYWeb.DTO.LoginRequest;
+import MyWeb.JYWeb.DTO.RefreshRequest;
 import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.RegisterRequestDTO;
+import MyWeb.JYWeb.DTO.RegisterRequest;
 import MyWeb.JYWeb.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class UserController {
 
     //회원가입 사용자 정보 저장
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequestDTO form) {
+    public ResponseEntity<String> register(@RequestBody RegisterRequest form) {
 
         userService.registerUser(form);
 
@@ -40,7 +41,7 @@ public class UserController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequestDTO loginRequest, HttpServletRequest request) {
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
         log.info("받은 loginId={}, password={}", loginRequest.getLoginId(), loginRequest.getPassword());
 
@@ -54,10 +55,10 @@ public class UserController {
 
     //리프레시 토큰 재발급
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshAccessToken(@RequestBody RefreshRequestDTO refreshRequestDTO) {
-        TokenResponse tokenResponse = userService.refreshAccessToken(refreshRequestDTO);
+    public ResponseEntity<TokenResponse> refreshAccessToken(@RequestBody RefreshRequest refreshRequest) {
+        TokenResponse tokenResponse = userService.refreshAccessToken(refreshRequest);
 
-        log.info("리프레시 토큰 재발급: {}", refreshRequestDTO.getLoginId());
+        log.info("리프레시 토큰 재발급: {}", refreshRequest.getLoginId());
 
         return ResponseEntity.ok(tokenResponse);
     }
@@ -66,6 +67,13 @@ public class UserController {
     @DeleteMapping("/logout")
     public ResponseEntity logout(HttpServletRequest request){
         String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
+        }
+
         userService.logout(accessToken);
         return ResponseEntity.ok().body("로그아웃 완료");
     }

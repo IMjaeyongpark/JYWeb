@@ -1,13 +1,12 @@
 package MyWeb.JYWeb.controller;
 
-import MyWeb.JYWeb.DTO.BoardCreateRequestDTO;
+import MyWeb.JYWeb.DTO.BoardCreateRequest;
 import MyWeb.JYWeb.service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/board")
@@ -20,10 +19,25 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+    //게시글 등록
     @PostMapping("/create")
-    public ResponseEntity createBoard(@RequestBody BoardCreateRequestDTO boardCreateRequestDTO){
+    public ResponseEntity<String> createBoard(@RequestBody BoardCreateRequest boardCreateRequest, HttpServletRequest request){
 
-        boardService.createBoard(boardCreateRequestDTO);
+        String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
+        }
+
+        boardService.createBoard(boardCreateRequest, accessToken);
+
+        return ResponseEntity.ok("등록 완료");
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteBoard(@RequestParam("loginId") String loginId){
 
         return ResponseEntity.ok().build();
     }

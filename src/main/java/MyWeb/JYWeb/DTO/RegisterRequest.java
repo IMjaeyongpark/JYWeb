@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 //사용자 정보 DTO
 @Getter
 @Setter
-public class RegisterRequestDTO {
+public class RegisterRequest {
     private Long userId;
 
     private String loginId;

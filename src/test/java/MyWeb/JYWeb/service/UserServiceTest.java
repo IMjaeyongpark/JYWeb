@@ -1,10 +1,10 @@
 package MyWeb.JYWeb.service;
 
 
-import MyWeb.JYWeb.DTO.LoginRequestDTO;
-import MyWeb.JYWeb.DTO.RefreshRequestDTO;
+import MyWeb.JYWeb.DTO.LoginRequest;
+import MyWeb.JYWeb.DTO.RefreshRequest;
 import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.RegisterRequestDTO;
+import MyWeb.JYWeb.DTO.RegisterRequest;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.DuplicateLoginIdException;
 import MyWeb.JYWeb.exception.custom.UnauthorizedException;
@@ -49,7 +49,7 @@ public class UserServiceTest {
     @DisplayName("회원가입 성공")
     public void register_success() {
         // given
-        RegisterRequestDTO form = new RegisterRequestDTO();
+        RegisterRequest form = new RegisterRequest();
         form.setLoginId("newuser");
         form.setPassword("password123");
         form.setNickname("닉네임");
@@ -73,7 +73,7 @@ public class UserServiceTest {
         user.setNickname("중복유저");
         userRepository.save(user);
 
-        RegisterRequestDTO form = new RegisterRequestDTO();
+        RegisterRequest form = new RegisterRequest();
         form.setLoginId("duplicate");
         form.setPassword("newpass");
         form.setNickname("새유저");
@@ -88,7 +88,7 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
+        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
 
         //when
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
@@ -105,11 +105,11 @@ public class UserServiceTest {
         //given
         String loginId1 = "testuser";
         String password1 = "1234_fail";
-        LoginRequestDTO loginRequestDTO1 = new LoginRequestDTO(loginId1, password1);
+        LoginRequest loginRequestDTO1 = new LoginRequest(loginId1, password1);
 
         String loginId2 = "test";
         String password2 = "1234_fail";
-        LoginRequestDTO loginRequestDTO2 = new LoginRequestDTO(loginId2, password2);
+        LoginRequest loginRequestDTO2 = new LoginRequest(loginId2, password2);
 
         //when && then
         assertThrows(ValidateLoginException.class, () -> userService.validateUser(loginRequestDTO1));
@@ -123,7 +123,7 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
+        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
 
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
 
@@ -133,7 +133,7 @@ public class UserServiceTest {
             e.printStackTrace();
         }
 
-        RefreshRequestDTO refreshRequestDTO = new RefreshRequestDTO(loginId, tokenResponse.getRefreshToken());
+        RefreshRequest refreshRequestDTO = new RefreshRequest(loginId, tokenResponse.getRefreshToken());
 
         //when
         TokenResponse newToken = userService.refreshAccessToken(refreshRequestDTO);
@@ -152,14 +152,14 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
+        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
 
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
 
         //when
         redisTemplate.delete(loginId);
 
-        RefreshRequestDTO refreshRequestDTO = new RefreshRequestDTO(loginId, tokenResponse.getRefreshToken());
+        RefreshRequest refreshRequestDTO = new RefreshRequest(loginId, tokenResponse.getRefreshToken());
 
 
         //then
@@ -173,7 +173,7 @@ public class UserServiceTest {
         //given
         String loginId = "testuser";
         String password = "1234";
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(loginId, password);
+        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
 
         TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
 
