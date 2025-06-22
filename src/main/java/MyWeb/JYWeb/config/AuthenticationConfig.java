@@ -23,6 +23,18 @@ public class AuthenticationConfig {
     @Value("${jwt.secret}")
     private String secretKey;
 
+    public static final String[] AUTH_WHITELIST = {
+            "/user/login",
+            "/user/register",
+            "/user/test",
+            "/user/checkNickname",
+            "/user/checkId",
+            "/board/get",
+            "/board/getDetail",
+            "/comment/get"
+    };
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -30,13 +42,7 @@ public class AuthenticationConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .requestMatchers(
-                        "/user/login",
-                        "/user/test",
-                        "/user/register",
-                        "/user/checkNickname",
-                        "/user/checkId"
-                ).permitAll()
+                .requestMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

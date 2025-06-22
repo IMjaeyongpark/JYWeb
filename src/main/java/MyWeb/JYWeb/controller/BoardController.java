@@ -43,7 +43,7 @@ public class BoardController {
     }
 
     //게시글 삭제
-    @DeleteMapping("/{boardId}")
+    @DeleteMapping("/delete/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Long boardId, HttpServletRequest request) {
 
         String accessToken = request.getHeader("Authorization");

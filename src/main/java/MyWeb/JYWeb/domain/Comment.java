@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "comment")
 public class Comment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "commentId")
     private Long commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)

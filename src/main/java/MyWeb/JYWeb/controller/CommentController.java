@@ -41,7 +41,7 @@ public class CommentController {
     }
 
     //댓글 삭제
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId, HttpServletRequest request){
 
         String accessToken = request.getHeader("Authorization");
@@ -68,10 +68,5 @@ public class CommentController {
 
         return ResponseEntity.ok(commentResponsePage);
     }
-
-
-
-
-
 
 }
