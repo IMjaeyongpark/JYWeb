@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/comment")
 @Slf4j
+@CrossOrigin
 public class CommentController {
 
     private final CommentService commentService;

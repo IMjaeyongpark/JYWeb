@@ -5,7 +5,9 @@ import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
 import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.service.BoardService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 @Slf4j
+@CrossOrigin
 public class BoardController {
 
     private final BoardService boardService;
@@ -72,10 +75,40 @@ public class BoardController {
 
     //게시글 상세내용 가져오기
     @GetMapping("/getDetail")
-    public ResponseEntity<BoardDetailResponse> getBoardDetail(@RequestParam("boardId") Long boardId) {
+    public ResponseEntity<BoardDetailResponse> getBoardDetail(@RequestParam("boardId") Long boardId,
+                                                              HttpServletRequest request,
+                                                              HttpServletResponse response) {
 
-        BoardDetailResponse boardDetailResponse = boardService.getBoardDetail(boardId);
-        return ResponseEntity.ok(boardDetailResponse);
+        // 1. 쿠키에서 이미 본 게시글인지 확인
+        boolean increase = true;
+        String cookieName = "viewedBoards";
+        Cookie[] cookies = request.getCookies();
+
+        String viewed = "";
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookieName.equals(cookie.getName())) {
+                    viewed = cookie.getValue();
+                    if (viewed.contains("[" + boardId + "]")) {
+                        increase = false; // 이미 본 글
+                    }
+                }
+            }
+        }
+
+        // 2. 조회수 증가
+        if (increase) {
+            boardService.increaseViewCount(boardId);
+            // 3. 쿠키에 기록
+            Cookie newCookie = new Cookie(cookieName, viewed + "[" + boardId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24); // 1일
+            response.addCookie(newCookie);
+        }
+
+        // 4. 상세 조회 데이터 리턴
+        BoardDetailResponse detail = boardService.getBoardDetail(boardId);
+        return ResponseEntity.ok(detail);
     }
 
     //사용자 게시글 목록 가져오기

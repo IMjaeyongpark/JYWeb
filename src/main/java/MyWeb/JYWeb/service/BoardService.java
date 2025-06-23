@@ -109,6 +109,13 @@ public class BoardService {
         return boardDetailResponse;
     }
 
+    //게시글 조회수 증가
+    public void increaseViewCount(Long boardId) {
+        boardRepository.incrementViewCount(boardId);
+    }
+
+
+
     //사용자 게시글 목록 가져오기
     public Page<BoardResponse> getUserBoard(String accessToken, int pageNum, int pageSize){
 
