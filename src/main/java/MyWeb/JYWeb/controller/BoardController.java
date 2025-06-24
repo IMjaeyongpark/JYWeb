@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 @Slf4j
-@CrossOrigin
 public class BoardController {
 
     private final BoardService boardService;
@@ -47,7 +46,7 @@ public class BoardController {
 
     //게시글 삭제
     @DeleteMapping("/delete/{boardId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId, HttpServletRequest request) {
+    public ResponseEntity<String> deleteBoard(@PathVariable("boardId") Long boardId, HttpServletRequest request) {
 
         String accessToken = request.getHeader("Authorization");
 

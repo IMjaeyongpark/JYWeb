@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/comment")
 @Slf4j
-@CrossOrigin
 public class CommentController {
 
     private final CommentService commentService;
@@ -60,12 +59,10 @@ public class CommentController {
 
     //게시글 댓글 가져오기
     @GetMapping("/get")
-    public ResponseEntity<List<CommentResponse>> getComments(@RequestParam("boardId") Long boardId,
-                                                             @RequestParam("pageNum") int pageNum,
-                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize){
+    public ResponseEntity<List<CommentResponse>> getComments(@RequestParam("boardId") Long boardId){
 
 
-        List<CommentResponse> commentResponsePage = commentService.getComments(boardId, pageNum, pageSize);
+        List<CommentResponse> commentResponsePage = commentService.getComments(boardId);
 
         return ResponseEntity.ok(commentResponsePage);
     }

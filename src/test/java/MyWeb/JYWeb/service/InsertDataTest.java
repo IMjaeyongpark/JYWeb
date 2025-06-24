@@ -77,6 +77,14 @@ public class InsertDataTest {
                 comment.setContent(content);
 
                 commentRepository.save(comment);
+                if(j == 0){
+                    Comment dcomment = new Comment();
+                    dcomment.setBoard(list.get(i));
+                    dcomment.setUser(user);
+                    dcomment.setContent(content);
+                    dcomment.setParent(comment);
+                    commentRepository.save(dcomment);
+                }
             }
         }
 

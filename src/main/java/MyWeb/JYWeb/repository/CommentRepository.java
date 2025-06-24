@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -23,9 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.board.boardId = :boardId")
     int deleteAllByBoard(@Param("boardId") Long boardId);
 
-    //댓글 조회
-    @Query("SELECT c FROM Comment c JOIN c.user u WHERE c.board.boardId = :boardId")
-    Page<Comment> findByBoardId(@Param("boardId") Long boardId, Pageable pageable);
+    List<Comment> findAllByBoard_BoardIdAndParentIsNullOrderByCreatedAtAsc(Long boardId);
 
 
 

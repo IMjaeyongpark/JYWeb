@@ -100,41 +100,25 @@ public class CommentService {
         log.info("댓글 삭제 완료 : {}", comment.getCommentId());
     }
 
-    //댓글 조회
-    public List<CommentResponse> getComments(Long boardId, int pageNum, int pageSize ){
-
-        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending());
-
-        Page<Comment> comments = commentRepository.findByBoardId(boardId, pageable);
-
-        List<CommentResponse> responseList = comments.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-
-        return responseList;
-    }
-
-    //삭제된 댓글 내용 null 처리
-    public CommentResponse toDto(Comment comment) {
-        if (comment.getDeletedAt() != null) {
-            return new CommentResponse(
-                    comment.getCommentId(),
-                    null,
-                    null,
-                    null,
-                    comment.getParent() != null ? comment.getParent().getCommentId() : null,
-                    comment.getDeletedAt()
-            );
-        }
+    // Comment -> CommentResponse로 변환
+    public CommentResponse toResponse(Comment comment) {
         return new CommentResponse(
                 comment.getCommentId(),
                 comment.getContent(),
                 comment.getUser().getNickname(),
-                comment.getCreatedAt(),
-                comment.getParent() != null ? comment.getParent().getCommentId() : null,
-                null
+                comment.getCreatedAt().toString(),
+                comment.getChildren().stream()
+                        .map(this::toResponse)
+                        .collect(Collectors.toList())
         );
     }
 
+    // 서비스에서 최상위 댓글만 조회 후, 변환해서 반환
+    public List<CommentResponse> getComments(Long boardId) {
+        List<Comment> parents = commentRepository.findAllByBoard_BoardIdAndParentIsNullOrderByCreatedAtAsc(boardId);
+        return parents.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
 
 }

@@ -17,6 +17,8 @@ public class BoardDetailResponse {
 
     private String userNickname;
 
+    private String loginId;
+
     private int viewCount;
 
     private LocalDateTime createdAt;
