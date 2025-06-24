@@ -3,7 +3,6 @@ package MyWeb.JYWeb.controller;
 import MyWeb.JYWeb.DTO.BoardCreateRequest;
 import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
-import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.service.BoardService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

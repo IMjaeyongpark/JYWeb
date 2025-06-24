@@ -24,6 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.board.boardId = :boardId")
     int deleteAllByBoard(@Param("boardId") Long boardId);
 
+    //
     List<Comment> findAllByBoard_BoardIdAndParentIsNullOrderByCreatedAtAsc(Long boardId);
 
 

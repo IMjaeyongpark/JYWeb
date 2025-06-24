@@ -106,10 +106,12 @@ public class CommentService {
                 comment.getCommentId(),
                 comment.getContent(),
                 comment.getUser().getNickname(),
+                comment.getUser().getLoginId(),
                 comment.getCreatedAt().toString(),
                 comment.getChildren().stream()
                         .map(this::toResponse)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                comment.getDeletedAt()
         );
     }
 

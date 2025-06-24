@@ -29,6 +29,7 @@ public class AuthenticationConfig {
             "/user/test",
             "/user/checkNickname",
             "/user/checkId",
+            "/user/refresh",
             "/board/get",
             "/board/getDetail",
             "/comment/get"
