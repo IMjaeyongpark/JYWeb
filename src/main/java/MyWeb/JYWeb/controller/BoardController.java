@@ -3,6 +3,7 @@ package MyWeb.JYWeb.controller;
 import MyWeb.JYWeb.DTO.BoardCreateRequest;
 import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
+import MyWeb.JYWeb.DTO.BoardUpdateRequest;
 import MyWeb.JYWeb.service.BoardService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -123,8 +124,25 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        Page<BoardResponse> boardResponses = boardService.getUserBoard(accessToken,pageNum, pageSize);
+        Page<BoardResponse> boardResponses = boardService.getUserBoard(accessToken, pageNum, pageSize);
         return ResponseEntity.ok(boardResponses);
 
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateBoard(@RequestBody BoardUpdateRequest boardUpdateRequest,
+                                              HttpServletRequest request) {
+
+        String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
+        }
+
+        boardService.updateBoard(boardUpdateRequest, accessToken);
+
+        return ResponseEntity.ok("수정 완료");
     }
 }

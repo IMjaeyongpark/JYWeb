@@ -1,8 +1,10 @@
 package MyWeb.JYWeb.controller;
 
 
+import MyWeb.JYWeb.DTO.BoardUpdateRequest;
 import MyWeb.JYWeb.DTO.CommentCreateRequest;
 import MyWeb.JYWeb.DTO.CommentResponse;
+import MyWeb.JYWeb.DTO.CommentUpdateRequest;
 import MyWeb.JYWeb.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +67,23 @@ public class CommentController {
         List<CommentResponse> commentResponsePage = commentService.getComments(boardId);
 
         return ResponseEntity.ok(commentResponsePage);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateBoard(@RequestBody CommentUpdateRequest commentUpdateRequest,
+                                              HttpServletRequest request) {
+
+        String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
+        }
+
+        commentService.updateComment(commentUpdateRequest, accessToken);
+
+        return ResponseEntity.ok("수정 완료");
     }
 
 }

@@ -40,8 +40,16 @@ public class Comment {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(nullable = false)
+    private LocalDateTime updatedAt = java.time.LocalDateTime.now();
+
     @Column
     private LocalDateTime deletedAt;
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = java.time.LocalDateTime.now();
+    }
 
 
 }

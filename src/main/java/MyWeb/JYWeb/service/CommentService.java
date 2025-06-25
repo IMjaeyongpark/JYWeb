@@ -1,8 +1,10 @@
 package MyWeb.JYWeb.service;
 
 
+import MyWeb.JYWeb.DTO.BoardUpdateRequest;
 import MyWeb.JYWeb.DTO.CommentCreateRequest;
 import MyWeb.JYWeb.DTO.CommentResponse;
+import MyWeb.JYWeb.DTO.CommentUpdateRequest;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.Comment;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 import java.time.LocalDateTime;
@@ -66,7 +69,7 @@ public class CommentService {
         comment.setBoard(board);
         comment.setContent(commentCreateRequest.getContent());
 
-        if(commentCreateRequest.getParentId() != null){
+        if (commentCreateRequest.getParentId() != null) {
             Comment parentComment = commentRepository.findById(commentCreateRequest.getParentId())
                     .orElseThrow(() -> new CommentNotFoundException("댓글(부모)이 존재하지 않습니다."));
             comment.setParent(parentComment);
@@ -86,12 +89,11 @@ public class CommentService {
                 .orElseThrow(() -> new CommentNotFoundException());
 
 
-
         if (!comment.getUser().getLoginId().equals(loginId)) {
             throw new UnauthorizedException("삭제 권한이 없습니다.");
         }
 
-        if(comment.getDeletedAt() == null) {
+        if (comment.getDeletedAt() == null) {
             comment.setDeletedAt(LocalDateTime.now());
             commentRepository.save(comment);
         }
@@ -121,6 +123,28 @@ public class CommentService {
         return parents.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    //댓글 수정
+    public void updateComment(CommentUpdateRequest commentUpdateRequest, String accessToken) {
+
+        String loginId = JwtUtil.getLoginId(accessToken, secretKey);
+
+        Comment comment = commentRepository.findById(commentUpdateRequest.getCommentId())
+                .orElseThrow(() -> new CommentNotFoundException());
+
+        if (!comment.getUser().getLoginId().equals(loginId)) {
+            throw new UnauthorizedException("수정 권한이 없습니다.");
+        }
+
+        int updatedRows = commentRepository.updateComment(
+                commentUpdateRequest.getCommentId(),
+                commentUpdateRequest.getContent()
+        );
+
+        if (updatedRows == 0) {
+            throw new IllegalStateException("댓글 수정 실패");
+        }
     }
 
 }

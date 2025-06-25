@@ -24,11 +24,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("DELETE FROM Comment c WHERE c.board.boardId = :boardId")
     int deleteAllByBoard(@Param("boardId") Long boardId);
 
-    //
+    //댓글 가져오기 - boardId로 대댓글이 아닌 댓글 생성일 내림차순
     List<Comment> findAllByBoard_BoardIdAndParentIsNullOrderByCreatedAtAsc(Long boardId);
 
-
-
-
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Comment c SET c.content = :content WHERE c.commentId = :commentId")
+    int updateComment(@Param("commentId") Long commentId, @Param("content") String content);
 
 }

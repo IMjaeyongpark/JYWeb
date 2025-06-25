@@ -4,6 +4,7 @@ package MyWeb.JYWeb.service;
 import MyWeb.JYWeb.DTO.BoardCreateRequest;
 import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
+import MyWeb.JYWeb.DTO.BoardUpdateRequest;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.User;
@@ -78,7 +79,7 @@ public class BoardService {
             throw new UnauthorizedException("삭제 권한이 없습니다.");
         }
 
-        if(board.getDeletedAt() == null) {
+        if (board.getDeletedAt() == null) {
             board.setDeletedAt(LocalDateTime.now());
             commentRepository.softDeleteAllByBoard(boardId, LocalDateTime.now());
             boardRepository.save(board);
@@ -88,7 +89,7 @@ public class BoardService {
     }
 
     //게시물 조회
-    public Page<BoardResponse> getBoard(int pageNum, int pageSize ){
+    public Page<BoardResponse> getBoard(int pageNum, int pageSize) {
 
         Page<BoardResponse> boardResponses = boardRepository.findAllByDeletedAtIsNull(
                 PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending()));
@@ -98,11 +99,11 @@ public class BoardService {
     }
 
     //게시물 내용 조회
-    public BoardDetailResponse getBoardDetail(Long boardId){
+    public BoardDetailResponse getBoardDetail(Long boardId) {
 
         BoardDetailResponse boardDetailResponse = boardRepository.findByBoardId(boardId);
 
-        if(boardDetailResponse == null || boardDetailResponse.getDeletedAt() != null){
+        if (boardDetailResponse == null || boardDetailResponse.getDeletedAt() != null) {
             throw new BoardNotFoundException("존재하지 않는 게시물입니다.");
         }
 
@@ -111,13 +112,15 @@ public class BoardService {
 
     //게시글 조회수 증가
     public void increaseViewCount(Long boardId) {
-        boardRepository.incrementViewCount(boardId);
+        int updatedRows = boardRepository.incrementViewCount(boardId);
+        if (updatedRows == 0) {
+            throw new IllegalStateException("조회수 수정 실패");
+        }
     }
 
 
-
     //사용자 게시글 목록 가져오기
-    public Page<BoardResponse> getUserBoard(String accessToken, int pageNum, int pageSize){
+    public Page<BoardResponse> getUserBoard(String accessToken, int pageNum, int pageSize) {
 
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
@@ -130,5 +133,27 @@ public class BoardService {
         return boardResponses;
     }
 
+    //게시글 수정
+    public void updateBoard(BoardUpdateRequest boardUpdateRequest, String accessToken) {
+
+        String loginId = JwtUtil.getLoginId(accessToken, secretKey);
+
+        Board board = boardRepository.findById(boardUpdateRequest.getBoardId())
+                .orElseThrow(() -> new BoardNotFoundException());
+
+        if (!board.getUser().getLoginId().equals(loginId)) {
+            throw new UnauthorizedException("수정 권한이 없습니다.");
+        }
+
+        int updatedRows = boardRepository.updateBoard(
+                boardUpdateRequest.getBoardId(),
+                boardUpdateRequest.getTitle(),
+                boardUpdateRequest.getContent()
+        );
+
+        if (updatedRows == 0) {
+            throw new IllegalStateException("게시글 수정 실패");
+        }
+    }
 
 }
