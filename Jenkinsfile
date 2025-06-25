@@ -14,18 +14,21 @@ pipeline {
         sh "docker build -t $DOCKER_IMAGE ."
       }
     }
-    stage('Push Image') {
+    stage('Push to DockerHub') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-          sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+          sh "echo $PASS | docker login -u $USER --password-stdin"
           sh "docker push $DOCKER_IMAGE"
         }
       }
     }
-    stage('Deploy to K8s') {
+    stage('Deploy') {
       steps {
-        sh "kubectl apply -f k8s/deployment.yaml"
-        sh "kubectl apply -f k8s/service.yaml"
+        sh '''
+          docker stop my-app || true
+          docker rm my-app || true
+          docker run -d -p 80:8080 --name my-app jaeyong36/JYWeb:latest
+        '''
       }
     }
   }
