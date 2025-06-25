@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: JYWeb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: JYWeb
+  template:
+    metadata:
+      labels:
+        app: JYWeb
+    spec:
+      containers:
+        - name: JYWeb
+          image: jaeyong36/JYWeb:latest
+          ports:
+            - containerPort: 8080
