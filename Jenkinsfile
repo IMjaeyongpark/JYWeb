@@ -5,17 +5,17 @@ pipeline {
     DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
   }
 
-  stage('Inject Config File') {
-    steps {
-      sh 'mkdir -p src/main/resources'
-      configFileProvider([
-        configFile(fileId: 'app-properties', targetLocation: 'src/main/resources/application.properties')
-      ]) {
-        echo 'application.properties injected'
+  stages {
+    stage('Inject Config File') {
+      steps {
+        sh 'mkdir -p src/main/resources'
+        configFileProvider([
+          configFile(fileId: 'app-properties', targetLocation: 'src/main/resources/application.properties')
+        ]) {
+          echo 'application.properties injected'
+        }
       }
     }
-  }
-
 
     stage('Build') {
       steps {
@@ -43,9 +43,7 @@ pipeline {
         sh '''
           docker stop my-app redis || true
           docker rm my-app redis || true
-
           docker run -d --name redis -p 6379:6379 redis
-
           docker run -d -p 80:8080 --name my-app --link redis:redis jaeyong36/JYWeb:latest
         '''
       }
