@@ -5,16 +5,17 @@ pipeline {
     DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
   }
 
-  stages {
-    stage('Inject Config File') {
-      steps {
-        configFileProvider([
-          configFile(fileId: 'app-properties', targetLocation: 'src/main/resources/application.properties')
-        ]) {
-          echo 'application.properties injected'
-        }
+  stage('Inject Config File') {
+    steps {
+      sh 'mkdir -p src/main/resources'
+      configFileProvider([
+        configFile(fileId: 'app-properties', targetLocation: 'src/main/resources/application.properties')
+      ]) {
+        echo 'application.properties injected'
       }
     }
+  }
+
 
     stage('Build') {
       steps {
