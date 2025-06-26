@@ -25,9 +25,14 @@ pipeline {
     stage('Deploy') {
       steps {
         sh '''
-          docker stop my-app || true
-          docker rm my-app || true
-          docker run -d -p 80:8080 --name my-app jaeyong36/JYWeb:latest
+          docker stop my-app redis || true
+          docker rm my-app redis || true
+
+          # Redis 실행
+          docker run -d --name redis -p 6379:6379 redis
+
+          # Spring Boot 앱 실행 (같은 네트워크 사용하면 더 안전)
+          docker run -d -p 80:8080 --name my-app --link redis:redis jaeyong36/JYWeb:latest
         '''
       }
     }
