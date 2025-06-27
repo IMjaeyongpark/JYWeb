@@ -3,9 +3,9 @@ pipeline {
 
   environment {
     JAVA_HOME = '/usr/lib/jvm/java-17-amazon-corretto'
-    PATH = '/usr/lib/jvm/java-17-amazon-corretto/bin:$PATH'
+    PATH+JAVA = '/usr/lib/jvm/java-17-amazon-corretto/bin'
     DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
-    JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp"
+     JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp"
   }
 
   stages {
