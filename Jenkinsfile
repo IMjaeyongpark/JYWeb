@@ -20,16 +20,21 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh './gradlew clean build'
+        sh '''
+          export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+          export PATH=/usr/lib/jvm/java-17-amazon-corretto/bin:$PATH
+          ./gradlew clean build
+        '''
       }
     }
 
     stage('Docker Build') {
       steps {
-        sh "
-        export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
-        export PATH=/usr/lib/jvm/java-17-amazon-corretto/bin:$PATH
-        docker build -t $DOCKER_IMAGE ."
+        sh '''
+          export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+          export PATH=/usr/lib/jvm/java-17-amazon-corretto/bin:$PATH
+          docker build -t $DOCKER_IMAGE .
+        '''
       }
     }
 
