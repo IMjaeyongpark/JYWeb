@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
+    DOCKER_IMAGE = 'jaeyong36/jyweb:latest'
     JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp"
   }
 
