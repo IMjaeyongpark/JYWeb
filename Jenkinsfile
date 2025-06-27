@@ -3,6 +3,7 @@ pipeline {
 
   environment {
     DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
+    JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp" // 추가
   }
 
   stages {
