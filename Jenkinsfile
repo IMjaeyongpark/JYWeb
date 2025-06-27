@@ -7,12 +7,6 @@ pipeline {
   }
 
   stages {
-    stage('Init tmpdir') {
-      steps {
-        sh 'sudo mkdir -p /mnt/big_disk/tmp && sudo chmod 1777 /mnt/big_disk/tmp'
-      }
-    }
-
     stage('Inject Config File') {
       steps {
         sh 'mkdir -p src/main/resources'
