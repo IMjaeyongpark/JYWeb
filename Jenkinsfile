@@ -2,11 +2,12 @@ pipeline {
   agent any
 
   environment {
-     DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
-     JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp"
+    DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
+    JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp"
   }
 
   stages {
+
     stage('Inject Config File') {
       steps {
         sh 'mkdir -p src/main/resources'
@@ -21,20 +22,18 @@ pipeline {
     stage('Build') {
       steps {
         sh '''
-              export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto.x86_64
-              export PATH=/usr/lib/jvm/java-17-amazon-corretto.x86_64/bin:$PATH
-              echo "===== java -version ====="
-              java -version
-              ./gradlew clean build
-            '''
+          echo "===== java version ====="
+          java -version
+          echo "===== javac version ====="
+          javac -version
+          ./gradlew clean build
+        '''
       }
     }
 
     stage('Docker Build') {
       steps {
         sh '''
-          export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto.x86_64
-          export PATH=/usr/lib/jvm/java-17-amazon-corretto.x86_64/bin:$PATH
           docker build -t $DOCKER_IMAGE .
         '''
       }
@@ -43,8 +42,10 @@ pipeline {
     stage('Push to DockerHub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-          sh "echo $PASS | docker login -u $USER --password-stdin"
-          sh "docker push $DOCKER_IMAGE"
+          sh '''
+            echo $PASS | docker login -u $USER --password-stdin
+            docker push $DOCKER_IMAGE
+          '''
         }
       }
     }
@@ -55,7 +56,7 @@ pipeline {
           docker stop my-app redis || true
           docker rm my-app redis || true
           docker run -d --name redis -p 6379:6379 redis
-          docker run -d -p 80:8080 --name my-app --link redis:redis jaeyong36/JYWeb:latest
+          docker run -d -p 80:8080 --name my-app --link redis:redis $DOCKER_IMAGE
         '''
       }
     }
