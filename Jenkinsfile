@@ -33,8 +33,8 @@ pipeline {
     stage('Docker Build') {
       steps {
         sh '''
-          export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
-          export PATH=/usr/lib/jvm/java-17-amazon-corretto/bin:$PATH
+          export JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto.x86_64
+          export PATH=/usr/lib/jvm/java-17-amazon-corretto.x86_64/bin:$PATH
           docker build -t $DOCKER_IMAGE .
         '''
       }
