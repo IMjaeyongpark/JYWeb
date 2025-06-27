@@ -2,6 +2,8 @@ pipeline {
   agent any
 
   environment {
+    JAVA_HOME = '/usr/lib/jvm/java-17-amazon-corretto'
+    PATH = '/usr/lib/jvm/java-17-amazon-corretto/bin:$PATH'
     DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
     JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp"
   }
