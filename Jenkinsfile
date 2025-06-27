@@ -53,10 +53,9 @@ pipeline {
     stage('Deploy') {
       steps {
         sh '''
-          docker stop my-app redis || true
-          docker rm my-app redis || true
-          docker run -d --name redis -p 6379:6379 redis
-          docker run -d -p 80:8080 --name my-app --link redis:redis $DOCKER_IMAGE
+          docker stop my-app || true
+          docker rm my-app || true
+          docker run -d -p 80:8080 --name my-app $DOCKER_IMAGE
         '''
       }
     }
