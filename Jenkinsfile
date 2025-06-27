@@ -3,10 +3,16 @@ pipeline {
 
   environment {
     DOCKER_IMAGE = 'jaeyong36/JYWeb:latest'
-    JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp" // 추가
+    JAVA_TOOL_OPTIONS = "-Djava.io.tmpdir=/mnt/big_disk/tmp"
   }
 
   stages {
+    stage('Init tmpdir') {
+      steps {
+        sh 'sudo mkdir -p /mnt/big_disk/tmp && sudo chmod 1777 /mnt/big_disk/tmp'
+      }
+    }
+
     stage('Inject Config File') {
       steps {
         sh 'mkdir -p src/main/resources'
