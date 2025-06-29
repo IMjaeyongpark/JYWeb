@@ -48,23 +48,21 @@ public class BoardService {
     }
 
     //게시글 등록
-    public void createBoard(BoardCreateRequest boardCreateRequest, String accessToken) {
+    public Long createBoard(BoardCreateRequest boardCreateRequest, String accessToken) {
 
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
-        Board board = new Board();
 
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ValidateLoginException("사용자 없음"));
 
-        board.setTitle(boardCreateRequest.getTitle());
-        board.setContent(boardCreateRequest.getContent());
-        board.setUser(user);
+        Board board = Board.from(boardCreateRequest,user);
 
         boardRepository.save(board);
 
         log.info("게시글 등록 : {}", user.getUserId());
 
+        return board.getBoardId();
     }
 
     //게시글 삭제

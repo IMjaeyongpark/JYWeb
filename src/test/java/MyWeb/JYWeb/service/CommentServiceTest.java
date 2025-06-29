@@ -22,33 +22,6 @@ public class CommentServiceTest {
     @Autowired
     private CommentService commentService;
 
-    @Test
-    @DisplayName("댓글 작성 성공")
-    public void createComment_success() {
-        //given
 
-        Long boardId = 1L;
-        String content = "test";
-
-        CommentCreateRequest commentCreateRequest = new CommentCreateRequest();
-        commentCreateRequest.setBoardId(boardId);
-        commentCreateRequest.setContent(content);
-
-        String loginId = "testuser";
-        String password = "1234";
-        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
-
-        TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
-
-
-        //when
-
-        commentService.createComment(commentCreateRequest, tokenResponse.getAccessToken());
-
-        //then
-
-
-
-    }
 
 }

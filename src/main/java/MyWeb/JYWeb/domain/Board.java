@@ -1,5 +1,6 @@
 package MyWeb.JYWeb.domain;
 
+import MyWeb.JYWeb.DTO.BoardCreateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,9 +11,14 @@ import java.util.List;
 @Entity
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@Builder
 @Table(name = "board")
 public class Board {
+
+    public Board(String title,String content, User user){
+        this.title = title;
+        this.content = content;
+        this.user = user;
+    }
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "boardId")
     private Long boardId;
@@ -48,6 +54,9 @@ public class Board {
         this.updatedAt = java.time.LocalDateTime.now();
     }
 
+    public static Board from(BoardCreateRequest dto, User user) {
+        return new Board(dto.getTitle(), dto.getContent(), user);
+    }
 
 }
 

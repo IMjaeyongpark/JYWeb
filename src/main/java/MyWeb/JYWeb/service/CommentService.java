@@ -52,9 +52,7 @@ public class CommentService {
 
 
     //댓글 등록
-    public void createComment(CommentCreateRequest commentCreateRequest, String accessToken) {
-
-        Comment comment = new Comment();
+    public Long createComment(CommentCreateRequest commentCreateRequest, String accessToken) {
 
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
@@ -64,10 +62,7 @@ public class CommentService {
         Board board = boardRepository.findById(commentCreateRequest.getBoardId())
                 .orElseThrow(() -> new BoardNotFoundException());
 
-
-        comment.setUser(user);
-        comment.setBoard(board);
-        comment.setContent(commentCreateRequest.getContent());
+        Comment comment = Comment.form(commentCreateRequest, user, board);
 
         if (commentCreateRequest.getParentId() != null) {
             Comment parentComment = commentRepository.findById(commentCreateRequest.getParentId())
@@ -79,6 +74,7 @@ public class CommentService {
 
         log.info("댓글 작성 등록: userId = {} boardId = {}", user.getUserId(), board.getBoardId());
 
+        return comment.getCommentId();
     }
 
     //댓글 삭제

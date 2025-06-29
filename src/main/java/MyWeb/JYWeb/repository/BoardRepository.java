@@ -3,12 +3,15 @@ package MyWeb.JYWeb.repository;
 import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
 import MyWeb.JYWeb.domain.Board;
+import MyWeb.JYWeb.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
@@ -40,5 +43,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Board b SET b.title = :title,b.content = :content WHERE b.boardId = :boardId")
     int updateBoard(@Param("boardId") Long boardId, @Param("title") String title, @Param("content") String content);
+
+
 
 }

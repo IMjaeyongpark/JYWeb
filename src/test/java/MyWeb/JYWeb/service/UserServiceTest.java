@@ -44,6 +44,10 @@ public class UserServiceTest {
         redisTemplate.delete("testuser");
     }
 
+    private TokenResponse loginAsTestUser() {
+        return userService.validateUser(new LoginRequest("testuser", "1234"));
+    }
+
 
     @Test
     @DisplayName("회원가입 성공")
@@ -121,11 +125,8 @@ public class UserServiceTest {
     @DisplayName("리프레쉬 토큰 재발급 성공")
     public void refreshAccessToken_success(){
         //given
-        String loginId = "testuser";
-        String password = "1234";
-        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
 
-        TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
+        TokenResponse tokenResponse = loginAsTestUser();
 
         try {
             Thread.sleep(1000);
@@ -133,7 +134,7 @@ public class UserServiceTest {
             e.printStackTrace();
         }
 
-        RefreshRequest refreshRequestDTO = new RefreshRequest(loginId, tokenResponse.getRefreshToken());
+        RefreshRequest refreshRequestDTO = new RefreshRequest("testuser", tokenResponse.getRefreshToken());
 
         //when
         TokenResponse newToken = userService.refreshAccessToken(refreshRequestDTO);
@@ -149,16 +150,12 @@ public class UserServiceTest {
     @DisplayName("리프레쉬 토큰 재발급 샐패")
     public void refreshAccessToken_fail(){
         //given
-        String loginId = "testuser";
-        String password = "1234";
-        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
-
-        TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
+        TokenResponse tokenResponse = loginAsTestUser();
 
         //when
-        redisTemplate.delete(loginId);
+        redisTemplate.delete("testuser");
 
-        RefreshRequest refreshRequestDTO = new RefreshRequest(loginId, tokenResponse.getRefreshToken());
+        RefreshRequest refreshRequestDTO = new RefreshRequest("testuser", tokenResponse.getRefreshToken());
 
 
         //then
@@ -170,17 +167,13 @@ public class UserServiceTest {
     @DisplayName("로그아웃")
     public void logout_success() {
         //given
-        String loginId = "testuser";
-        String password = "1234";
-        LoginRequest loginRequestDTO = new LoginRequest(loginId, password);
-
-        TokenResponse tokenResponse = userService.validateUser(loginRequestDTO);
+        TokenResponse tokenResponse = loginAsTestUser();
 
         //when
         userService.logout(tokenResponse.getAccessToken());
 
         //then
-        assertNull(refreshTokenService.getRefreshToken(loginId));
+        assertNull(refreshTokenService.getRefreshToken("testuser"));
 
     }
 

@@ -1,5 +1,7 @@
 package MyWeb.JYWeb.domain;
 
+import MyWeb.JYWeb.DTO.CommentCreateRequest;
+import MyWeb.JYWeb.service.CommentService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,12 +12,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
-@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "comment")
 public class Comment {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    public Comment(String content, User user, Board board) {
+        this.content = content;
+        this.user = user;
+        this.board = board;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "commentId")
     private Long commentId;
 
@@ -51,6 +62,9 @@ public class Comment {
         this.updatedAt = java.time.LocalDateTime.now();
     }
 
+    static public Comment form(CommentCreateRequest commentCreateRequest, User user, Board board) {
+        return new Comment(commentCreateRequest.getContent(), user, board);
+    }
 
 }
 

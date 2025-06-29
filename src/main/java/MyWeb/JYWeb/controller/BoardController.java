@@ -41,6 +41,7 @@ public class BoardController {
 
         boardService.createBoard(boardCreateRequest, accessToken);
 
+
         return ResponseEntity.ok("등록 완료");
     }
 
