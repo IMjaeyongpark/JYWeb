@@ -5,6 +5,8 @@ import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
 import MyWeb.JYWeb.DTO.BoardUpdateRequest;
 import MyWeb.JYWeb.service.BoardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +29,14 @@ public class BoardController {
         this.boardService = boardService;
     }
 
-    //게시글 등록
+    @Operation(
+            summary = "게시글 등록",
+            description = "JWT 토큰이 필요하며, 게시글 제목과 내용을 입력받아 등록합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "등록 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @PostMapping("/create")
     public ResponseEntity<String> createBoard(@RequestBody BoardCreateRequest boardCreateRequest, HttpServletRequest request) {
 
@@ -45,7 +54,14 @@ public class BoardController {
         return ResponseEntity.ok("등록 완료");
     }
 
-    //게시글 삭제
+    @Operation(
+            summary = "게시글 삭제",
+            description = "JWT 토큰이 필요하며, 게시글 ID를 통해 특정 게시글을 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "삭제 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @DeleteMapping("/delete/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable("boardId") Long boardId, HttpServletRequest request) {
 
@@ -62,7 +78,13 @@ public class BoardController {
         return ResponseEntity.ok("삭제 완료");
     }
 
-    //게시글 목록 가져오기
+    @Operation(
+            summary = "게시글 목록 조회",
+            description = "게시글 목록을 페이지 단위로 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공")
+            }
+    )
     @GetMapping("/get")
     public ResponseEntity<Page<BoardResponse>> getBoard(@RequestParam("pageNum") int pageNum,
                                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
@@ -73,7 +95,13 @@ public class BoardController {
 
     }
 
-    //게시글 상세내용 가져오기
+    @Operation(
+            summary = "게시글 상세 조회",
+            description = "게시글 ID를 통해 특정 게시글의 내용을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공")
+            }
+    )
     @GetMapping("/getDetail")
     public ResponseEntity<BoardDetailResponse> getBoardDetail(@RequestParam("boardId") Long boardId,
                                                               HttpServletRequest request,
@@ -111,7 +139,14 @@ public class BoardController {
         return ResponseEntity.ok(detail);
     }
 
-    //사용자 게시글 목록 가져오기
+    @Operation(
+            summary = "사용자 게시글 목록 조회",
+            description = "JWT 토큰이 필요하며, 특정 사용자의 게시글 목록을 페이지 단위로 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @GetMapping("/getUser")
     public ResponseEntity<Page<BoardResponse>> getUserBoard(@RequestParam("pageNum") int pageNum,
                                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
@@ -130,6 +165,14 @@ public class BoardController {
 
     }
 
+    @Operation(
+            summary = "게시글 수정",
+            description = "JWT 토큰이 필요하며, 게시글 ID를 통해 특정 게시글의 제목과 내용을 입력받아 수정합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "수정 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @PutMapping("/update")
     public ResponseEntity<String> updateBoard(@RequestBody BoardUpdateRequest boardUpdateRequest,
                                               HttpServletRequest request) {

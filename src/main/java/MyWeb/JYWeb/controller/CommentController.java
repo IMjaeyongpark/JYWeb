@@ -6,6 +6,8 @@ import MyWeb.JYWeb.DTO.CommentCreateRequest;
 import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.DTO.CommentUpdateRequest;
 import MyWeb.JYWeb.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,7 +27,14 @@ public class CommentController {
     }
 
 
-    //댓글 등록
+    @Operation(
+            summary = "댓글 작성",
+            description = "JWT 토큰이 필요하며, 게시글 ID와 함께 제목 및 내용을 입력받아 댓글을 등록합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "등록 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @PostMapping("/create")
     public ResponseEntity<String> createComment(@RequestBody CommentCreateRequest commentCreateRequest, HttpServletRequest request){
 
@@ -42,7 +51,14 @@ public class CommentController {
         return ResponseEntity.ok("댓글 작성 완료");
     }
 
-    //댓글 삭제
+    @Operation(
+            summary = "댓글 삭제",
+            description = "JWT 토큰이 필요하며, 댓글 ID를 통해 특정 댓글을 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "삭제 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable("commentId") Long commentId, HttpServletRequest request){
 
@@ -59,7 +75,13 @@ public class CommentController {
         return ResponseEntity.ok("삭제 완료");
     }
 
-    //게시글 댓글 가져오기
+    @Operation(
+            summary = "댓글 조회",
+            description = "게시글 ID를 통해 댓글 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공")
+            }
+    )
     @GetMapping("/get")
     public ResponseEntity<List<CommentResponse>> getComments(@RequestParam("boardId") Long boardId){
 
@@ -69,6 +91,14 @@ public class CommentController {
         return ResponseEntity.ok(commentResponsePage);
     }
 
+    @Operation(
+            summary = "댓글 수정",
+            description = "JWT 토큰이 필요하며, 댓글 ID와 함께 제목 및 내용을 입력받아 댓글을 수정합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "수정 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @PutMapping("/update")
     public ResponseEntity<String> updateBoard(@RequestBody CommentUpdateRequest commentUpdateRequest,
                                               HttpServletRequest request) {

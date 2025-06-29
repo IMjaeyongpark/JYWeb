@@ -24,6 +24,8 @@ public class AuthenticationConfig {
     private String secretKey;
 
     public static final String[] AUTH_WHITELIST = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
             "/user/login",
             "/user/register",
             "/user/test",
@@ -32,7 +34,7 @@ public class AuthenticationConfig {
             "/user/refresh",
             "/board/get",
             "/board/getDetail",
-            "/comment/get"
+            "/comment/get",
     };
 
 
