@@ -7,6 +7,7 @@ import MyWeb.JYWeb.DTO.LoginRequest;
 import MyWeb.JYWeb.DTO.TokenResponse;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.User;
+import MyWeb.JYWeb.exception.custom.ValidateLoginException;
 import MyWeb.JYWeb.repository.BoardRepository;
 import MyWeb.JYWeb.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -62,6 +63,32 @@ public class BoardServiceTest {
 
     }
 
+    @Test
+    @DisplayName("게시글 삭제 성공")
+    public void deleteBoard_success() {
+        //given
+        String title = "test title";
+        String content = "test content";
+
+        TokenResponse tokenResponse = loginAsTestUser();
+
+        BoardCreateRequest boardCreateRequest = new BoardCreateRequest(title, content);
+
+        Long boardId = boardService.createBoard(boardCreateRequest,tokenResponse.getAccessToken());
+
+
+        //when
+
+        boardService.deleteBoard(boardId, tokenResponse.getAccessToken());
+
+        //then
+
+        Optional<Board> deletedBoard = boardRepository.findById(boardId);
+
+        assertTrue(deletedBoard.isPresent());
+        assertNotNull(deletedBoard.get().getDeletedAt());
+
+    }
 
 
 }
