@@ -98,6 +98,7 @@ public class UserController {
             description = "리프레시 토큰을 만료시켜 로그아웃 처리합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+                    @ApiResponse(responseCode = "401", description = "엑세스 토큰 유효하지 않음")
             }
     )
     @DeleteMapping("/logout")
