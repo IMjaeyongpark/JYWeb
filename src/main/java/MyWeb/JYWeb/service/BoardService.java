@@ -7,12 +7,14 @@ import MyWeb.JYWeb.DTO.BoardResponse;
 import MyWeb.JYWeb.DTO.BoardUpdateRequest;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
+import MyWeb.JYWeb.domain.UploadFile;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.BoardNotFoundException;
 import MyWeb.JYWeb.exception.custom.UnauthorizedException;
 import MyWeb.JYWeb.exception.custom.ValidateLoginException;
 import MyWeb.JYWeb.repository.BoardRepository;
 import MyWeb.JYWeb.repository.CommentRepository;
+import MyWeb.JYWeb.repository.UploadFileRepository;
 import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +23,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Service
@@ -38,6 +47,7 @@ public class BoardService {
     private final UserRepository userRepository;
 
     private final CommentRepository commentRepository;
+
 
     public BoardService(BoardRepository boardRepository,
                         UserRepository userRepository,
@@ -64,6 +74,7 @@ public class BoardService {
 
         return board.getBoardId();
     }
+
 
     //게시글 삭제
     public void deleteBoard(Long boardId, String accessToken) {
@@ -153,5 +164,6 @@ public class BoardService {
             throw new IllegalStateException("게시글 수정 실패");
         }
     }
+
 
 }

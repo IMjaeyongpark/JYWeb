@@ -115,6 +115,8 @@ public class UserController {
         return ResponseEntity.ok().body("로그아웃 완료");
     }
 
+
+    @CrossOrigin(origins = "*")
     @Operation(
             summary = "아이디 중복 확인",
             description = "입력한 로그인 ID가 이미 존재하는지 확인합니다. 반환값이 true이면 중복된 ID입니다.",

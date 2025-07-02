@@ -54,6 +54,10 @@ public class Board {
         this.updatedAt = java.time.LocalDateTime.now();
     }
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UploadFile> files = new ArrayList<>();
+
+
     public static Board from(BoardCreateRequest dto, User user) {
         return new Board(dto.getTitle(), dto.getContent(), user);
     }

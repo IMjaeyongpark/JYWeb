@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,7 +39,8 @@ public class BoardController {
             }
     )
     @PostMapping("/create")
-    public ResponseEntity<String> createBoard(@RequestBody BoardCreateRequest boardCreateRequest, HttpServletRequest request) {
+    public ResponseEntity<String> createBoard(@RequestBody BoardCreateRequest boardCreateRequest,
+                                              HttpServletRequest request) {
 
         String accessToken = request.getHeader("Authorization");
 
@@ -53,6 +55,7 @@ public class BoardController {
 
         return ResponseEntity.ok("등록 완료");
     }
+
 
     @Operation(
             summary = "게시글 삭제",
