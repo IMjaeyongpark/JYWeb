@@ -80,4 +80,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
+
+    @ExceptionHandler(UploadFileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUploadFileNotFoundException(UploadFileNotFoundException e){
+
+        log.warn("파일을 찾을 수 없음: {}", e.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                e.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
 }
