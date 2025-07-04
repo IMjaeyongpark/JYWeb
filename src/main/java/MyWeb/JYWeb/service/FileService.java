@@ -1,19 +1,14 @@
 package MyWeb.JYWeb.service;
 
-import MyWeb.JYWeb.Util.JwtUtil;
+
 import MyWeb.JYWeb.domain.UploadFile;
-import MyWeb.JYWeb.exception.custom.UnauthorizedException;
 import MyWeb.JYWeb.exception.custom.UploadFileNotFoundException;
-import MyWeb.JYWeb.exception.custom.ValidateLoginException;
 import MyWeb.JYWeb.repository.UploadFileRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -48,7 +43,7 @@ public class FileService {
 
 
     //S3 파일 업로
-    public String upload(MultipartFile file, String accessToken) {
+    public String upload(MultipartFile file) {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         try {
@@ -68,17 +63,10 @@ public class FileService {
     }
 
     //첨부파일 삭제
-    public void deleteFile(String fileName, String accessToken) {
-
-        String loginId = JwtUtil.getLoginId(accessToken, secretKey);
-
+    public void deleteFile(String fileName) {
 
         UploadFile file = uploadFileRepository.findByUploadName(fileName)
                 .orElseThrow(() -> new UploadFileNotFoundException());
-
-        if (!file.getBoard().getUser().getLoginId().equals(loginId)) {
-            throw new UnauthorizedException("삭제 권한이 없습니다.");
-        }
 
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(bucket)

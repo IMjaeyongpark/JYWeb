@@ -39,7 +39,8 @@ public class BoardController {
             }
     )
     @PostMapping("/create")
-    public ResponseEntity<String> createBoard(@RequestBody BoardCreateRequest boardCreateRequest,
+    public ResponseEntity<String> createBoard(@RequestPart("board") BoardCreateRequest boardCreateRequest,
+                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
                                               HttpServletRequest request) {
 
         String accessToken = request.getHeader("Authorization");
@@ -50,7 +51,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
         }
 
-        boardService.createBoard(boardCreateRequest, accessToken);
+        boardService.createBoard(boardCreateRequest, files, accessToken);
 
 
         return ResponseEntity.ok("등록 완료");

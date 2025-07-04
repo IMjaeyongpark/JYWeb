@@ -25,13 +25,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -48,17 +45,22 @@ public class BoardService {
 
     private final CommentRepository commentRepository;
 
+    private final FileService fileService;
+    private final UploadFileRepository uploadFileRepository;
+
 
     public BoardService(BoardRepository boardRepository,
                         UserRepository userRepository,
-                        CommentRepository commentRepository) {
+                        CommentRepository commentRepository, FileService fileService, UploadFileRepository uploadFileRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.fileService = fileService;
+        this.uploadFileRepository = uploadFileRepository;
     }
 
     //게시글 등록
-    public Long createBoard(BoardCreateRequest boardCreateRequest, String accessToken) {
+    public Long createBoard(BoardCreateRequest boardCreateRequest, List<MultipartFile> files, String accessToken) {
 
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
@@ -66,9 +68,17 @@ public class BoardService {
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ValidateLoginException("사용자 없음"));
 
-        Board board = Board.from(boardCreateRequest,user);
+        Board board = Board.from(boardCreateRequest, user);
 
-        boardRepository.save(board);
+        Board tmp = boardRepository.save(board);
+
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String uploadFileName = fileService.upload(file);
+                UploadFile uploadFile = new UploadFile(file.getOriginalFilename(), uploadFileName, tmp);
+                uploadFileRepository.save(uploadFile);
+            }
+        }
 
         log.info("게시글 등록 : {}", user.getUserId());
 
@@ -110,11 +120,25 @@ public class BoardService {
     //게시물 내용 조회
     public BoardDetailResponse getBoardDetail(Long boardId) {
 
-        BoardDetailResponse boardDetailResponse = boardRepository.findByBoardId(boardId);
+        // Board 정보만 조회
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardNotFoundException("게시물 없음"));
 
-        if (boardDetailResponse == null || boardDetailResponse.getDeletedAt() != null) {
-            throw new BoardNotFoundException("존재하지 않는 게시물입니다.");
-        }
+        // 파일 조회
+        List<UploadFile> files = uploadFileRepository.findByBoard_BoardId(boardId);
+
+        // 파일 URL 추출
+        List<String> fileUrls = files.stream()
+                .map(f -> fileService.getPresignedUrl(f.getUploadName()))
+                .collect(Collectors.toList());
+
+        // DTO 생성
+        BoardDetailResponse boardDetailResponse = new BoardDetailResponse(
+                board.getBoardId(), board.getTitle(), board.getContent(),
+                board.getUser().getNickname(), board.getUser().getLoginId(),
+                board.getViewCount(), board.getCreatedAt(), board.getUpdatedAt(),
+                board.getDeletedAt(), fileUrls
+        );
 
         return boardDetailResponse;
     }

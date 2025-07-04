@@ -52,7 +52,7 @@ public class BoardServiceTest {
 
         //when
 
-        Long boardId = boardService.createBoard(boardCreateRequest,tokenResponse.getAccessToken());
+        Long boardId = boardService.createBoard(boardCreateRequest, null, tokenResponse.getAccessToken());
 
         //then
 
@@ -74,7 +74,7 @@ public class BoardServiceTest {
 
         BoardCreateRequest boardCreateRequest = new BoardCreateRequest(title, content);
 
-        Long boardId = boardService.createBoard(boardCreateRequest,tokenResponse.getAccessToken());
+        Long boardId = boardService.createBoard(boardCreateRequest, null, tokenResponse.getAccessToken());
 
 
         //when
