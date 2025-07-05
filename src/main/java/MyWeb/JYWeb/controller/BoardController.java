@@ -178,7 +178,8 @@ public class BoardController {
             }
     )
     @PutMapping("/update")
-    public ResponseEntity<String> updateBoard(@RequestBody BoardUpdateRequest boardUpdateRequest,
+    public ResponseEntity<String> updateBoard(@ModelAttribute BoardUpdateRequest boardUpdateRequest,
+                                              @RequestPart(value = "newFiles", required = false) List<MultipartFile> newFiles,
                                               HttpServletRequest request) {
 
         String accessToken = request.getHeader("Authorization");
@@ -189,7 +190,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 없음");
         }
 
-        boardService.updateBoard(boardUpdateRequest, accessToken);
+        boardService.updateBoard(boardUpdateRequest, newFiles, boardUpdateRequest.getDeleteFileNames(), accessToken);
 
         return ResponseEntity.ok("수정 완료");
     }

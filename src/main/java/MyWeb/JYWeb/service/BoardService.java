@@ -62,8 +62,8 @@ public class BoardService {
     //게시글 등록
     public Long createBoard(BoardCreateRequest boardCreateRequest, List<MultipartFile> files, String accessToken) {
 
+        //사용자 검증
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
-
 
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ValidateLoginException("사용자 없음"));
@@ -72,6 +72,7 @@ public class BoardService {
 
         Board tmp = boardRepository.save(board);
 
+        //파일 저장
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 String uploadFileName = fileService.upload(file);
@@ -89,6 +90,7 @@ public class BoardService {
     //게시글 삭제
     public void deleteBoard(Long boardId, String accessToken) {
 
+        //사용자 검증
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
         Board board = boardRepository.findById(boardId)
@@ -98,6 +100,7 @@ public class BoardService {
             throw new UnauthorizedException("삭제 권한이 없습니다.");
         }
 
+        //소프트 삭제
         if (board.getDeletedAt() == null) {
             board.setDeletedAt(LocalDateTime.now());
             commentRepository.softDeleteAllByBoard(boardId, LocalDateTime.now());
@@ -110,6 +113,7 @@ public class BoardService {
     //게시물 조회
     public Page<BoardResponse> getBoard(int pageNum, int pageSize) {
 
+        //페이지 단위로 게시글 조회
         Page<BoardResponse> boardResponses = boardRepository.findAllByDeletedAtIsNull(
                 PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending()));
 
@@ -155,39 +159,57 @@ public class BoardService {
     //사용자 게시글 목록 가져오기
     public Page<BoardResponse> getUserBoard(String accessToken, int pageNum, int pageSize) {
 
+        //사용자 검증
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ValidateLoginException("사용자 없음"));
 
+        //사용자 게시글 조회
         Page<BoardResponse> boardResponses = boardRepository.findAllByUserIdAndDeletedAtIsNull(user.getUserId(),
                 PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending()));
 
         return boardResponses;
     }
 
-    //게시글 수정
-    public void updateBoard(BoardUpdateRequest boardUpdateRequest, String accessToken) {
 
+    //게시글 수정
+    public void updateBoard(BoardUpdateRequest boardUpdateRequest, List<MultipartFile> newFiles, List<String> deleteFileNames, String accessToken) {
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
         Board board = boardRepository.findById(boardUpdateRequest.getBoardId())
-                .orElseThrow(() -> new BoardNotFoundException());
+                .orElseThrow(() -> new BoardNotFoundException("게시물 없음"));
 
+        // 권한 확인
         if (!board.getUser().getLoginId().equals(loginId)) {
-            throw new UnauthorizedException("수정 권한이 없습니다.");
+            throw new UnauthorizedException("수정 권한 없음");
         }
 
-        int updatedRows = boardRepository.updateBoard(
-                boardUpdateRequest.getBoardId(),
-                boardUpdateRequest.getTitle(),
-                boardUpdateRequest.getContent()
-        );
+        // 게시글 내용 수정
+        board.setTitle(boardUpdateRequest.getTitle());
+        board.setContent(boardUpdateRequest.getContent());
 
-        if (updatedRows == 0) {
-            throw new IllegalStateException("게시글 수정 실패");
+        //기존 파일 중 삭제 요청된 파일 삭제
+        if (deleteFileNames != null) {
+            for (String fileName : deleteFileNames) {
+                UploadFile file = uploadFileRepository.findByUploadName(fileName)
+                        .orElseThrow(() -> new RuntimeException("파일 없음"));
+
+                fileService.deleteFile(file.getUploadName()); // S3 삭제
+                uploadFileRepository.delete(file); // DB 삭제
+            }
         }
+
+        //새로운 파일 업로드
+        if (newFiles != null && !newFiles.isEmpty()) {
+            for (MultipartFile file : newFiles) {
+                String storedName = fileService.upload(file);
+                UploadFile uploadFile = new UploadFile(file.getOriginalFilename(), storedName, board);
+                uploadFileRepository.save(uploadFile);
+            }
+        }
+
+        log.info("게시글 수정 완료: {}", board.getBoardId());
+
     }
-
-
 }

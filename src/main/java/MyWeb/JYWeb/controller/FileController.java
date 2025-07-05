@@ -1,20 +1,20 @@
-package MyWeb.JYWeb.controller;
-
-import MyWeb.JYWeb.service.FileService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-
-@RestController
-@RequestMapping("/file")
-@Slf4j
-public class FileController {
+//package MyWeb.JYWeb.controller;
+//
+//import MyWeb.JYWeb.service.FileService;
+//import io.swagger.v3.oas.annotations.Operation;
+//import io.swagger.v3.oas.annotations.responses.ApiResponse;
+//import jakarta.servlet.http.HttpServletRequest;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.web.bind.annotation.*;
+//import org.springframework.web.multipart.MultipartFile;
+//
+//
+//@RestController
+//@RequestMapping("/file")
+//@Slf4j
+//public class FileController {
 //    private final FileService fileService;
 //
 //    public FileController(FileService fileService) {
@@ -68,4 +68,4 @@ public class FileController {
 //
 //        return ResponseEntity.ok(presignerUrl);
 //    }
-}
+//}
