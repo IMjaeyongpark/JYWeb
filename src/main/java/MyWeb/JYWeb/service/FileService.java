@@ -37,9 +37,6 @@ public class FileService {
         this.s3Client = s3Client;
         this.uploadFileRepository = uploadFileRepository;
     }
-    @Value("${jwt.secret}")
-    private String secretKey;
-
 
 
     //S3 파일 업로
@@ -77,6 +74,7 @@ public class FileService {
     }
 
 
+    //파일 가져오기
     public String getPresignedUrl(String fileName) {
         try (S3Presigner presigner = S3Presigner.builder()
                 .region(Region.AP_NORTHEAST_2)

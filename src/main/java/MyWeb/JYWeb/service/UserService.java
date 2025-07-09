@@ -58,6 +58,7 @@ public class UserService {
 
         log.info("회원가입 시도: {}", form.getLoginId());
 
+        //회원가입 정보 확인
         if (userRepository.existsByLoginId(form.getLoginId()) || userRepository.existsByNickname(form.getNickname())) {
             throw new DuplicateLoginIdException();
         }
@@ -78,14 +79,16 @@ public class UserService {
 
         Optional<User> user = userRepository.findByLoginId(loginRequest.getLoginId());
 
+        //비밀번호 확인
         if (!user.isPresent() || !passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
             throw new ValidateLoginException();
         }
 
+        //엑세스 토큰, 리프레시 토큰 생성
         String accessToken = JwtUtil.creatAccessToken(user.get().getLoginId(), secretKey, accessTokenExpiredMs);
         String refreshToken = JwtUtil.createRefreshToken(secretKey, refreshTokenExpiredMs);
 
-        //Redis에 refresh token 저장
+        //Redis refresh token 저장
         refreshTokenService.saveRefreshToken(user.get().getLoginId(), refreshToken, refreshTokenExpiredMs);
 
         return new TokenResponse(accessToken, refreshToken, loginRequest.getLoginId(), user.get().getNickname());

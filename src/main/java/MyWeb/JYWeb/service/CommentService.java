@@ -19,10 +19,6 @@ import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,6 +50,7 @@ public class CommentService {
     //댓글 등록
     public Long createComment(CommentCreateRequest commentCreateRequest, String accessToken) {
 
+        //권한 확인
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
         User user = userRepository.findByLoginId(loginId)
@@ -64,6 +61,8 @@ public class CommentService {
 
         Comment comment = Comment.form(commentCreateRequest, user, board);
 
+
+        //부모 댓글 삭제 여부 확인
         if (commentCreateRequest.getParentId() != null) {
             Comment parentComment = commentRepository.findById(commentCreateRequest.getParentId())
                     .orElseThrow(() -> new CommentNotFoundException("댓글(부모)이 존재하지 않습니다."));
@@ -79,16 +78,18 @@ public class CommentService {
 
     //댓글 삭제
     public void deleteComment(Long commentId, String accessToken) {
+
+        //권한 확인
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException());
 
-
         if (!comment.getUser().getLoginId().equals(loginId)) {
             throw new UnauthorizedException("삭제 권한이 없습니다.");
         }
 
+        //댓글 소프트 삭제
         if (comment.getDeletedAt() == null) {
             comment.setDeletedAt(LocalDateTime.now());
             commentRepository.save(comment);
@@ -98,7 +99,7 @@ public class CommentService {
         log.info("댓글 삭제 완료 : {}", comment.getCommentId());
     }
 
-    // Comment -> CommentResponse로 변환
+    // Comment -> CommentResponse 변환
     public CommentResponse toResponse(Comment comment) {
         return new CommentResponse(
                 comment.getCommentId(),
@@ -124,6 +125,7 @@ public class CommentService {
     //댓글 수정
     public void updateComment(CommentUpdateRequest commentUpdateRequest, String accessToken) {
 
+        //권한 확인
         String loginId = JwtUtil.getLoginId(accessToken, secretKey);
 
         Comment comment = commentRepository.findById(commentUpdateRequest.getCommentId())
@@ -133,6 +135,7 @@ public class CommentService {
             throw new UnauthorizedException("수정 권한이 없습니다.");
         }
 
+        //댓글 수정
         int updatedRows = commentRepository.updateComment(
                 commentUpdateRequest.getCommentId(),
                 commentUpdateRequest.getContent()

@@ -22,12 +22,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "WHERE b.deletedAt IS NULL")
     Page<BoardResponse> findAllByDeletedAtIsNull(Pageable pageable);
 
-    //게시물 내용 가져오기
-    @Query("SELECT new MyWeb.JYWeb.DTO.BoardDetailResponse(b.boardId, b.title, b.content, u.nickname, u.loginId, " +
-            " b.viewCount, b.createdAt,b.updatedAt,b.deletedAt) " +
-            "FROM Board b JOIN b.user u " +
-            "WHERE b.boardId = :boardId")
-    BoardDetailResponse findByBoardId(@Param("boardId") Long boardId);
+//    //게시물 내용 가져오기
+//    @Query("SELECT new MyWeb.JYWeb.DTO.BoardDetailResponse(b.boardId, b.title, b.content, u.nickname, u.loginId, " +
+//            " b.viewCount, b.createdAt,b.updatedAt,b.deletedAt, b.files) " +
+//            "FROM Board b JOIN b.user u " +
+//            "WHERE b.boardId = :boardId")
+//    BoardDetailResponse findByBoardId(@Param("boardId") Long boardId);
 
     //특정 사용자의 삭제되지 않은 게시물 가져오기
     @Query("SELECT new MyWeb.JYWeb.DTO.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
