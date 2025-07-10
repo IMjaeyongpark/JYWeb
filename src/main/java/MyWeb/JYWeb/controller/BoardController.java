@@ -4,12 +4,15 @@ import MyWeb.JYWeb.DTO.BoardCreateRequest;
 import MyWeb.JYWeb.DTO.BoardDetailResponse;
 import MyWeb.JYWeb.DTO.BoardResponse;
 import MyWeb.JYWeb.DTO.BoardUpdateRequest;
+import MyWeb.JYWeb.domain.BoardDocument;
+import MyWeb.JYWeb.service.BoardSearchService;
 import MyWeb.JYWeb.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -22,13 +25,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 @Slf4j
+@RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
 
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
-    }
+    private final BoardSearchService boardSearchService;
+
 
     @Operation(
             summary = "게시글 등록",
@@ -97,6 +100,22 @@ public class BoardController {
 
         return ResponseEntity.ok(boardResponsePage);
 
+    }
+
+    @Operation(
+            summary = "게시글 목록 검색",
+            description = "검색한 게시글 목록을 페이지 단위로 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공")
+            }
+    )
+    @GetMapping("/search")
+    public Page<BoardDocument> search(
+            @RequestParam("keyword") String keyword,
+            @RequestParam("pageNum") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+    ) {
+        return boardSearchService.searchByKeyword(keyword, pageNum, pageSize);
     }
 
     @Operation(

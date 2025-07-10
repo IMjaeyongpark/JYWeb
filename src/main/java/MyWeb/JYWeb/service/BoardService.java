@@ -7,16 +7,15 @@ import MyWeb.JYWeb.DTO.BoardResponse;
 import MyWeb.JYWeb.DTO.BoardUpdateRequest;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
+import MyWeb.JYWeb.domain.BoardDocument;
 import MyWeb.JYWeb.domain.UploadFile;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.BoardNotFoundException;
 import MyWeb.JYWeb.exception.custom.UnauthorizedException;
 import MyWeb.JYWeb.exception.custom.ValidateLoginException;
-import MyWeb.JYWeb.repository.BoardRepository;
-import MyWeb.JYWeb.repository.CommentRepository;
-import MyWeb.JYWeb.repository.UploadFileRepository;
-import MyWeb.JYWeb.repository.UserRepository;
+import MyWeb.JYWeb.repository.*;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -34,6 +33,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class BoardService {
 
     @Value("${jwt.secret}")
@@ -48,16 +48,8 @@ public class BoardService {
     private final FileService fileService;
     private final UploadFileRepository uploadFileRepository;
 
+    private final BoardElasticsearchRepository boardEsRepository;
 
-    public BoardService(BoardRepository boardRepository,
-                        UserRepository userRepository,
-                        CommentRepository commentRepository, FileService fileService, UploadFileRepository uploadFileRepository) {
-        this.boardRepository = boardRepository;
-        this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
-        this.fileService = fileService;
-        this.uploadFileRepository = uploadFileRepository;
-    }
 
     //게시글 등록
     public Long createBoard(BoardCreateRequest boardCreateRequest, List<MultipartFile> files, String accessToken) {
@@ -70,16 +62,25 @@ public class BoardService {
 
         Board board = Board.from(boardCreateRequest, user);
 
-        Board tmp = boardRepository.save(board);
+        Board saved = boardRepository.save(board);
 
         //파일 저장
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 String uploadFileName = fileService.upload(file);
-                UploadFile uploadFile = new UploadFile(file.getOriginalFilename(), uploadFileName, tmp);
+                UploadFile uploadFile = new UploadFile(file.getOriginalFilename(), uploadFileName, saved);
                 uploadFileRepository.save(uploadFile);
             }
         }
+
+        // ES 인덱싱
+        BoardDocument esDoc = BoardDocument.builder()
+                .boardId(saved.getBoardId())
+                .title(saved.getTitle())
+                .content(saved.getContent())
+                .createdAt(saved.getCreatedAt())
+                .build();
+        boardEsRepository.save(esDoc);
 
         log.info("게시글 등록 : {}", user.getUserId());
 
@@ -106,6 +107,8 @@ public class BoardService {
             commentRepository.softDeleteAllByBoard(boardId, LocalDateTime.now());
             boardRepository.save(board);
         }
+
+        boardEsRepository.deleteById(boardId);
 
         log.info("게시글 삭제 완료 : {}", board.getBoardId());
     }

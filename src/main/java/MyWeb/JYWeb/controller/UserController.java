@@ -8,6 +8,7 @@ import MyWeb.JYWeb.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
 
 
     private final UserService userService;
 
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @Operation(
             summary = "API 테스트",

@@ -17,6 +17,7 @@ import MyWeb.JYWeb.repository.BoardRepository;
 import MyWeb.JYWeb.repository.CommentRepository;
 import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class CommentService {
 
     @Value("${jwt.secret}")
@@ -37,14 +39,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
-
-    public CommentService(CommentRepository commentRepository,
-                          UserRepository userRepository,
-                          BoardRepository boardRepository) {
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
-        this.boardRepository = boardRepository;
-    }
 
 
     //댓글 등록

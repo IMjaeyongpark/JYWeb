@@ -5,6 +5,7 @@ import MyWeb.JYWeb.domain.UploadFile;
 import MyWeb.JYWeb.exception.custom.UploadFileNotFoundException;
 import MyWeb.JYWeb.repository.UploadFileRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class FileService {
     private final S3Client s3Client;
 
@@ -32,11 +34,6 @@ public class FileService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-
-    public FileService(S3Client s3Client, UploadFileRepository uploadFileRepository) {
-        this.s3Client = s3Client;
-        this.uploadFileRepository = uploadFileRepository;
-    }
 
 
     //S3 파일 업로

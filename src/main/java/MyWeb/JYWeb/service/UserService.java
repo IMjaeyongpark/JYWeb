@@ -11,6 +11,7 @@ import MyWeb.JYWeb.exception.custom.UnauthorizedException;
 import MyWeb.JYWeb.exception.custom.ValidateLoginException;
 import MyWeb.JYWeb.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
     @Value("${jwt.secret}")
@@ -40,13 +42,6 @@ public class UserService {
 
     private final RefreshTokenService refreshTokenService;
 
-    public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       RefreshTokenService refreshTokenService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.refreshTokenService = refreshTokenService;
-    }
 
     //스프링 실행 확인
     public ResponseEntity<String> test() {
