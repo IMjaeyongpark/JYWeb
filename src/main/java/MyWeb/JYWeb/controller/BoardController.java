@@ -110,7 +110,7 @@ public class BoardController {
             }
     )
     @GetMapping("/search")
-    public Page<BoardDocument> search(
+    public Page<BoardResponse> search(
             @RequestParam("keyword") String keyword,
             @RequestParam("pageNum") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
