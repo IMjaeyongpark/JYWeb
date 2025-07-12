@@ -1,10 +1,10 @@
 package MyWeb.JYWeb.service;
 
 
-import MyWeb.JYWeb.DTO.BoardCreateRequest;
-import MyWeb.JYWeb.DTO.BoardDetailResponse;
-import MyWeb.JYWeb.DTO.BoardResponse;
-import MyWeb.JYWeb.DTO.BoardUpdateRequest;
+import MyWeb.JYWeb.DTO.board.BoardCreateRequest;
+import MyWeb.JYWeb.DTO.board.BoardDetailResponse;
+import MyWeb.JYWeb.DTO.board.BoardResponse;
+import MyWeb.JYWeb.DTO.board.BoardUpdateRequest;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.BoardDocument;

@@ -1,7 +1,6 @@
 package MyWeb.JYWeb.service;
 
-import MyWeb.JYWeb.DTO.BoardResponse;
-import MyWeb.JYWeb.domain.Board;
+import MyWeb.JYWeb.DTO.board.BoardResponse;
 import MyWeb.JYWeb.domain.BoardDocument;
 import MyWeb.JYWeb.repository.BoardElasticsearchRepository;
 import MyWeb.JYWeb.repository.BoardRepository;

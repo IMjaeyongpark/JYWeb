@@ -1,13 +1,10 @@
 package MyWeb.JYWeb.service;
 
 
-import MyWeb.JYWeb.DTO.BoardCreateRequest;
-import MyWeb.JYWeb.DTO.CommentCreateRequest;
-import MyWeb.JYWeb.DTO.LoginRequest;
-import MyWeb.JYWeb.DTO.TokenResponse;
+import MyWeb.JYWeb.DTO.board.BoardCreateRequest;
+import MyWeb.JYWeb.DTO.user.LoginRequest;
+import MyWeb.JYWeb.DTO.user.TokenResponse;
 import MyWeb.JYWeb.domain.Board;
-import MyWeb.JYWeb.domain.User;
-import MyWeb.JYWeb.exception.custom.ValidateLoginException;
 import MyWeb.JYWeb.repository.BoardRepository;
 import MyWeb.JYWeb.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;

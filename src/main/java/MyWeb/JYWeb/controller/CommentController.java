@@ -1,10 +1,9 @@
 package MyWeb.JYWeb.controller;
 
 
-import MyWeb.JYWeb.DTO.BoardUpdateRequest;
-import MyWeb.JYWeb.DTO.CommentCreateRequest;
-import MyWeb.JYWeb.DTO.CommentResponse;
-import MyWeb.JYWeb.DTO.CommentUpdateRequest;
+import MyWeb.JYWeb.DTO.commnet.CommentCreateRequest;
+import MyWeb.JYWeb.DTO.commnet.CommentResponse;
+import MyWeb.JYWeb.DTO.commnet.CommentUpdateRequest;
 import MyWeb.JYWeb.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

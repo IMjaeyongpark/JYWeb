@@ -1,9 +1,9 @@
 package MyWeb.JYWeb.controller;
 
-import MyWeb.JYWeb.DTO.LoginRequest;
-import MyWeb.JYWeb.DTO.RefreshRequest;
-import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.RegisterRequest;
+import MyWeb.JYWeb.DTO.user.LoginRequest;
+import MyWeb.JYWeb.DTO.user.RefreshRequest;
+import MyWeb.JYWeb.DTO.user.TokenResponse;
+import MyWeb.JYWeb.DTO.user.RegisterRequest;
 import MyWeb.JYWeb.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

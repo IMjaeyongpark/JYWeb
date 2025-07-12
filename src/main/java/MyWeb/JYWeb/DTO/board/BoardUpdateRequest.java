@@ -1,4 +1,4 @@
-package MyWeb.JYWeb.DTO;
+package MyWeb.JYWeb.DTO.board;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,9 +1,6 @@
 package MyWeb.JYWeb.repository;
 
-import MyWeb.JYWeb.DTO.CommentResponse;
 import MyWeb.JYWeb.domain.Comment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

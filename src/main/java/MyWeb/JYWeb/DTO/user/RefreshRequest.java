@@ -1,4 +1,4 @@
-package MyWeb.JYWeb.DTO;
+package MyWeb.JYWeb.DTO.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentUpdateRequest {
-    private Long commentId;
-    private String content;
+public class RefreshRequest {
+    private String loginId;
+    private String refreshToken;
+
+
 }

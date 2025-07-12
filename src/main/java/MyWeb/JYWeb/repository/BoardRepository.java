@@ -1,6 +1,6 @@
 package MyWeb.JYWeb.repository;
 
-import MyWeb.JYWeb.DTO.BoardResponse;
+import MyWeb.JYWeb.DTO.board.BoardResponse;
 import MyWeb.JYWeb.domain.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 
 //    //게시물 내용 가져오기
-//    @Query("SELECT new MyWeb.JYWeb.DTO.BoardDetailResponse(b.boardId, b.title, b.content, u.nickname, u.loginId, " +
+//    @Query("SELECT new MyWeb.JYWeb.DTO.board.BoardDetailResponse(b.boardId, b.title, b.content, u.nickname, u.loginId, " +
 //            " b.viewCount, b.createdAt,b.updatedAt,b.deletedAt, b.files) " +
 //            "FROM Board b JOIN b.user u " +
 //            "WHERE b.boardId = :boardId")

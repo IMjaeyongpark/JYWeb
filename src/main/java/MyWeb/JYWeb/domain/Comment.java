@@ -1,15 +1,12 @@
 package MyWeb.JYWeb.domain;
 
-import MyWeb.JYWeb.DTO.CommentCreateRequest;
-import MyWeb.JYWeb.service.CommentService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import MyWeb.JYWeb.DTO.commnet.CommentCreateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter

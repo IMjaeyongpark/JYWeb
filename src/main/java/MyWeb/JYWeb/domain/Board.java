@@ -1,6 +1,6 @@
 package MyWeb.JYWeb.domain;
 
-import MyWeb.JYWeb.DTO.BoardCreateRequest;
+import MyWeb.JYWeb.DTO.board.BoardCreateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 

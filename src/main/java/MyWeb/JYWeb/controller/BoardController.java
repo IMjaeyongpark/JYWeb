@@ -1,10 +1,9 @@
 package MyWeb.JYWeb.controller;
 
-import MyWeb.JYWeb.DTO.BoardCreateRequest;
-import MyWeb.JYWeb.DTO.BoardDetailResponse;
-import MyWeb.JYWeb.DTO.BoardResponse;
-import MyWeb.JYWeb.DTO.BoardUpdateRequest;
-import MyWeb.JYWeb.domain.BoardDocument;
+import MyWeb.JYWeb.DTO.board.BoardCreateRequest;
+import MyWeb.JYWeb.DTO.board.BoardDetailResponse;
+import MyWeb.JYWeb.DTO.board.BoardResponse;
+import MyWeb.JYWeb.DTO.board.BoardUpdateRequest;
 import MyWeb.JYWeb.service.BoardSearchService;
 import MyWeb.JYWeb.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,8 +92,9 @@ public class BoardController {
             }
     )
     @GetMapping("/get")
-    public ResponseEntity<Page<BoardResponse>> getBoard(@RequestParam("pageNum") int pageNum,
-                                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResponseEntity<Page<BoardResponse>> getBoard(
+            @RequestParam("pageNum") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         Page<BoardResponse> boardResponsePage = boardService.getBoard(pageNum, pageSize);
 

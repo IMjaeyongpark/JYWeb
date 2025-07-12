@@ -1,10 +1,10 @@
 package MyWeb.JYWeb.service;
 
 
-import MyWeb.JYWeb.DTO.LoginRequest;
-import MyWeb.JYWeb.DTO.RefreshRequest;
-import MyWeb.JYWeb.DTO.TokenResponse;
-import MyWeb.JYWeb.DTO.RegisterRequest;
+import MyWeb.JYWeb.DTO.user.LoginRequest;
+import MyWeb.JYWeb.DTO.user.RefreshRequest;
+import MyWeb.JYWeb.DTO.user.TokenResponse;
+import MyWeb.JYWeb.DTO.user.RegisterRequest;
 import MyWeb.JYWeb.domain.User;
 import MyWeb.JYWeb.exception.custom.DuplicateLoginIdException;
 import MyWeb.JYWeb.exception.custom.UnauthorizedException;

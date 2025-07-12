@@ -1,10 +1,9 @@
 package MyWeb.JYWeb.service;
 
 
-import MyWeb.JYWeb.DTO.BoardUpdateRequest;
-import MyWeb.JYWeb.DTO.CommentCreateRequest;
-import MyWeb.JYWeb.DTO.CommentResponse;
-import MyWeb.JYWeb.DTO.CommentUpdateRequest;
+import MyWeb.JYWeb.DTO.commnet.CommentCreateRequest;
+import MyWeb.JYWeb.DTO.commnet.CommentResponse;
+import MyWeb.JYWeb.DTO.commnet.CommentUpdateRequest;
 import MyWeb.JYWeb.Util.JwtUtil;
 import MyWeb.JYWeb.domain.Board;
 import MyWeb.JYWeb.domain.Comment;
