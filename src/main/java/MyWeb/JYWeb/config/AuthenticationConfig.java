@@ -34,6 +34,7 @@ public class AuthenticationConfig {
             "/user/refresh",
             "/board/get",
             "/board/getDetail",
+            "/board/search",
             "/comment/get",
     };
 

@@ -16,7 +16,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 
     //삭제되지 않은 게시물 가져오기
-    @Query("SELECT new MyWeb.JYWeb.DTO.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
+    @Query("SELECT new MyWeb.JYWeb.DTO.board.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
             "FROM Board b JOIN b.user u " +
             "WHERE b.deletedAt IS NULL")
     Page<BoardResponse> findAllByDeletedAtIsNull(Pageable pageable);
@@ -31,13 +31,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 //    BoardDetailResponse findByBoardId(@Param("boardId") Long boardId);
 
     //특정 사용자의 삭제되지 않은 게시물 가져오기
-    @Query("SELECT new MyWeb.JYWeb.DTO.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
+    @Query("SELECT new MyWeb.JYWeb.DTO.board.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
             "FROM Board b JOIN b.user u " +
             "WHERE u.userId = :userId and b.deletedAt IS NULL")
     Page<BoardResponse> findAllByUserIdAndDeletedAtIsNull(@Param("userId") Long userId, Pageable pageable);
 
     //boardId 값으로 게시글 가져오기
-    @Query("SELECT new MyWeb.JYWeb.DTO.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
+    @Query("SELECT new MyWeb.JYWeb.DTO.board.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
             "FROM Board b JOIN b.user u " +
             "WHERE b.deletedAt IS NULL AND b.boardId IN :ids")
     List<BoardResponse> findBoardResponsesByBoardIdIn(@Param("ids") List<Long> ids);

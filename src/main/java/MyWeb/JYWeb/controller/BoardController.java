@@ -115,6 +115,9 @@ public class BoardController {
             @RequestParam("pageNum") int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
     ) {
+        log.info("hihihihihhiihi");
+        log.info("검색어: " + keyword);
+
         return boardSearchService.searchByKeyword(keyword, pageNum, pageSize);
     }
 
