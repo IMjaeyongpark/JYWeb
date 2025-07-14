@@ -47,9 +47,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("UPDATE Board b SET b.viewCount = b.viewCount + 1 WHERE b.boardId = :boardId")
     int incrementViewCount(@Param("boardId") Long boardId);
 
-
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE Board b SET b.title = :title,b.content = :content WHERE b.boardId = :boardId")
-    int updateBoard(@Param("boardId") Long boardId, @Param("title") String title, @Param("content") String content);
-
 }

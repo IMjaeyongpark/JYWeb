@@ -191,6 +191,13 @@ public class BoardService {
         board.setTitle(boardUpdateRequest.getTitle());
         board.setContent(boardUpdateRequest.getContent());
 
+        //es 수정
+        BoardDocument esDoc = boardEsRepository.findById(board.getBoardId()).get();
+        esDoc.setContent(boardUpdateRequest.getTitle());
+        esDoc.setTitle(boardUpdateRequest.getContent());
+
+        boardEsRepository.save(esDoc);
+
         //기존 파일 중 삭제 요청된 파일 삭제
         if (deleteFileNames != null) {
             for (String fileName : deleteFileNames) {
