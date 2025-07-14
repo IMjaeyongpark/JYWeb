@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.time.LocalDateTime;
+
 
 @Data
 @AllArgsConstructor
@@ -24,8 +24,6 @@ public class BoardDocument {
     @Field(type = FieldType.Text)
     private String content;
 
-    @Field(type = FieldType.Date)
-    private LocalDateTime createdAt;
 
 }
 

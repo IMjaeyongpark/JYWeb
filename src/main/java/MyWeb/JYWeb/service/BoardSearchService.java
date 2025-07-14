@@ -24,32 +24,31 @@ public class BoardSearchService {
 
     //게시글 검색
     public Page<BoardResponse> searchByKeyword(String keyword, int pageNum, int pageSize) {
-        //ES에서 boardId 페이징 조회
-        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending());
-        Page<BoardDocument> esPage = boardEsRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+        // 1. ES에서 boardId 페이징 조회
+        Pageable esPageable = PageRequest.of(pageNum, pageSize);
+        Page<BoardDocument> esPage = boardEsRepository.findByTitleContainingOrContentContaining(keyword, keyword, esPageable);
 
         List<Long> ids = esPage.getContent().stream()
                 .map(BoardDocument::getBoardId)
                 .toList();
 
         if (ids.isEmpty()) {
-            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+            return new PageImpl<>(Collections.emptyList(), esPageable, 0);
         }
 
-        //DB에서 최신 정보 조회
+        // 2. DB에서 boardId로 최신순 정렬해서 BoardResponse 리스트로 조회
         List<BoardResponse> dbList = boardRepository.findBoardResponsesByBoardIdIn(ids);
 
-        //ES 순서대로 정렬
+        // 3. ES 순서대로 매핑
         Map<Long, BoardResponse> map = dbList.stream()
                 .collect(Collectors.toMap(BoardResponse::getBoardId, b -> b));
-
         List<BoardResponse> sorted = ids.stream()
                 .map(map::get)
                 .filter(Objects::nonNull)
                 .toList();
 
-        //Page로 반환
-        return new PageImpl<>(sorted, pageable, esPage.getTotalElements());
+        return new PageImpl<>(sorted, esPageable, esPage.getTotalElements());
     }
+
 
 }

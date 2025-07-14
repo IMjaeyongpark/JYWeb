@@ -78,7 +78,6 @@ public class BoardService {
                 .boardId(saved.getBoardId())
                 .title(saved.getTitle())
                 .content(saved.getContent())
-                .createdAt(saved.getCreatedAt())
                 .build();
         boardEsRepository.save(esDoc);
 
