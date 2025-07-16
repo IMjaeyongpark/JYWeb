@@ -23,9 +23,10 @@ public class BoardSearchService {
 
 
     //게시글 검색
-    public Page<BoardResponse> searchByKeyword(String keyword, int pageNum, int pageSize) {
+    public Page<BoardResponse> searchByKeyword(String keyword, int pageNum, int pageSize, String sort, Sort.Direction dir) {
         // 1. ES에서 boardId 페이징 조회
         Pageable esPageable = PageRequest.of(pageNum, pageSize);
+
         Page<BoardDocument> esPage = boardEsRepository.findByTitleContainingOrContentContaining(keyword, keyword, esPageable);
 
         List<Long> ids = esPage.getContent().stream()

@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -94,9 +95,17 @@ public class BoardController {
     @GetMapping("/get")
     public ResponseEntity<Page<BoardResponse>> getBoard(
             @RequestParam("pageNum") int pageNum,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
+            @RequestParam(value = "direction", defaultValue = "desc") String direction) {
 
-        Page<BoardResponse> boardResponsePage = boardService.getBoard(pageNum, pageSize);
+
+        log.info("sort:" + sort);
+        log.info("direction:" + direction);
+
+        Sort.Direction dir = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Page<BoardResponse> boardResponsePage = boardService.getBoard(pageNum, pageSize, sort, dir);
 
         return ResponseEntity.ok(boardResponsePage);
 
@@ -113,11 +122,15 @@ public class BoardController {
     public Page<BoardResponse> search(
             @RequestParam("keyword") String keyword,
             @RequestParam("pageNum") int pageNum,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
+            @RequestParam(value = "direction", defaultValue = "desc") String direction
     ) {
         log.info("검색어: " + keyword);
 
-        return boardSearchService.searchByKeyword(keyword, pageNum, pageSize);
+        Sort.Direction dir = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        return boardSearchService.searchByKeyword(keyword, pageNum, pageSize, sort, dir);
     }
 
     @Operation(

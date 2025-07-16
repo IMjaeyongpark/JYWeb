@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -113,11 +114,25 @@ public class BoardService {
     }
 
     //게시물 조회
-    public Page<BoardResponse> getBoard(int pageNum, int pageSize) {
+    public Page<BoardResponse> getBoard(int pageNum, int pageSize, String sort, Sort.Direction dir) {
+
+
+        Pageable pageable;
+
+        switch (sort) {
+            case "viewCount":
+                pageable = PageRequest.of(pageNum, pageSize, Sort.by(dir, "viewCount"));
+                break;
+//            case "popular":
+//                pageable = PageRequest.of(pageNum, pageSize, Sort.by(dir, "likeCount"));
+//                break;
+            default:
+                pageable = PageRequest.of(pageNum, pageSize, Sort.by(dir, "createdAt"));
+                break;
+        }
 
         //페이지 단위로 게시글 조회
-        Page<BoardResponse> boardResponses = boardRepository.findAllByDeletedAtIsNull(
-                PageRequest.of(pageNum, pageSize, Sort.by("createdAt").descending()));
+        Page<BoardResponse> boardResponses = boardRepository.findAllByDeletedAtIsNull(pageable);
 
 
         return boardResponses;
