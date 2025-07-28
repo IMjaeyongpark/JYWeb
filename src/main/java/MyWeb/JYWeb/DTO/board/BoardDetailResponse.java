@@ -30,4 +30,8 @@ public class BoardDetailResponse {
 
     private List<String> fileUrls;
 
+    private long likeCount;
+
+    private boolean liked;
+
 }

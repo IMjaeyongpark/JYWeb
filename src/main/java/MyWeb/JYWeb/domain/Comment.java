@@ -54,6 +54,13 @@ public class Comment {
     @Column
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLike> likes = new ArrayList<>();
+
+    public int getLikeCount() {
+        return likes.size();
+    }
+
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = java.time.LocalDateTime.now();

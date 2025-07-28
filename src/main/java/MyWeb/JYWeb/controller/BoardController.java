@@ -1,9 +1,6 @@
 package MyWeb.JYWeb.controller;
 
-import MyWeb.JYWeb.DTO.board.BoardCreateRequest;
-import MyWeb.JYWeb.DTO.board.BoardDetailResponse;
-import MyWeb.JYWeb.DTO.board.BoardResponse;
-import MyWeb.JYWeb.DTO.board.BoardUpdateRequest;
+import MyWeb.JYWeb.DTO.board.*;
 import MyWeb.JYWeb.service.BoardSearchService;
 import MyWeb.JYWeb.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -145,7 +142,7 @@ public class BoardController {
                                                               HttpServletRequest request,
                                                               HttpServletResponse response) {
 
-        // 1. 쿠키에서 이미 본 게시글인지 확인
+        //쿠키에서 이미 본 게시글인지 확인
         boolean increase = true;
         String cookieName = "viewedBoards";
         Cookie[] cookies = request.getCookies();
@@ -162,18 +159,25 @@ public class BoardController {
             }
         }
 
-        // 2. 조회수 증가
+        //조회수 증가
         if (increase) {
             boardService.increaseViewCount(boardId);
-            // 3. 쿠키에 기록
+            //쿠키에 기록
             Cookie newCookie = new Cookie(cookieName, viewed + "[" + boardId + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(60 * 60 * 24); // 1일
             response.addCookie(newCookie);
         }
 
-        // 4. 상세 조회 데이터 리턴
-        BoardDetailResponse detail = boardService.getBoardDetail(boardId);
+        //로그인 확인
+        String accessToken = null;
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            accessToken = header.substring(7);
+        }
+
+        //상세 조회 데이터 리턴
+        BoardDetailResponse detail = boardService.getBoardDetail(boardId, accessToken);
         return ResponseEntity.ok(detail);
     }
 
@@ -228,4 +232,39 @@ public class BoardController {
 
         return ResponseEntity.ok("수정 완료");
     }
+
+    @PostMapping("/{boardId}/like")
+    public ResponseEntity<BoardLikeResponse> likeBoard(@PathVariable("boardId") Long boardId, HttpServletRequest request){
+
+
+        String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        BoardLikeResponse response = boardService.likeBoard(boardId, accessToken);
+
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{boardId}/like")
+    public ResponseEntity<BoardLikeResponse> unlikeBoard(@PathVariable("boardId") Long boardId, HttpServletRequest request){
+
+        String accessToken = request.getHeader("Authorization");
+
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        BoardLikeResponse response = boardService.unlikeBoard(boardId,accessToken);
+
+        return ResponseEntity.ok(response);
+    }
+
 }

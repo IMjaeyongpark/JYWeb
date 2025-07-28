@@ -1,15 +1,9 @@
 package MyWeb.JYWeb.service;
 
 
-import MyWeb.JYWeb.DTO.board.BoardCreateRequest;
-import MyWeb.JYWeb.DTO.board.BoardDetailResponse;
-import MyWeb.JYWeb.DTO.board.BoardResponse;
-import MyWeb.JYWeb.DTO.board.BoardUpdateRequest;
+import MyWeb.JYWeb.DTO.board.*;
 import MyWeb.JYWeb.Util.JwtUtil;
-import MyWeb.JYWeb.domain.Board;
-import MyWeb.JYWeb.domain.BoardDocument;
-import MyWeb.JYWeb.domain.UploadFile;
-import MyWeb.JYWeb.domain.User;
+import MyWeb.JYWeb.domain.*;
 import MyWeb.JYWeb.exception.custom.BoardNotFoundException;
 import MyWeb.JYWeb.exception.custom.UnauthorizedException;
 import MyWeb.JYWeb.exception.custom.ValidateLoginException;
@@ -28,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -50,6 +45,8 @@ public class BoardService {
     private final UploadFileRepository uploadFileRepository;
 
     private final BoardElasticsearchRepository boardEsRepository;
+
+    private final BoardLikeRepository boardLikeRepository;
 
 
     //게시글 등록
@@ -139,7 +136,7 @@ public class BoardService {
     }
 
     //게시물 내용 조회
-    public BoardDetailResponse getBoardDetail(Long boardId) {
+    public BoardDetailResponse getBoardDetail(Long boardId, String accessToken) {
 
         // Board 정보만 조회
         Board board = boardRepository.findById(boardId)
@@ -153,12 +150,24 @@ public class BoardService {
                 .map(f -> fileService.getPresignedUrl(f.getUploadName()))
                 .collect(Collectors.toList());
 
+
+        long likeCount = boardLikeRepository.countByBoard(board);
+        boolean liked = false;
+        if (accessToken != null && !accessToken.isBlank()) {
+            String loginId = JwtUtil.getLoginId(accessToken, secretKey);
+            Optional<User> optionalUser = userRepository.findByLoginId(loginId);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                liked = boardLikeRepository.findByBoardAndUser(board, user).isPresent();
+            }
+        }
+
         // DTO 생성
         BoardDetailResponse boardDetailResponse = new BoardDetailResponse(
                 board.getBoardId(), board.getTitle(), board.getContent(),
                 board.getUser().getNickname(), board.getUser().getLoginId(),
                 board.getViewCount(), board.getCreatedAt(), board.getUpdatedAt(),
-                board.getDeletedAt(), fileUrls
+                board.getDeletedAt(), fileUrls, likeCount, liked
         );
 
         return boardDetailResponse;
@@ -236,4 +245,41 @@ public class BoardService {
         log.info("게시글 수정 완료: {}", board.getBoardId());
 
     }
+
+    //게시글 좋아요
+    public BoardLikeResponse likeBoard(Long boardId, String accessToken) {
+
+        String loginId = JwtUtil.getLoginId(accessToken, secretKey);
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardNotFoundException("게시글 없음"));
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new RuntimeException("유저 없음"));
+
+        if (boardLikeRepository.findByBoardAndUser(board, user).isPresent()) {
+            throw new RuntimeException("이미 좋아요 누름");
+        }
+
+        boardLikeRepository.save(new BoardLike(null, board, user, LocalDateTime.now()));
+        long likeCount = boardLikeRepository.countByBoard(board);
+
+        return new BoardLikeResponse(true, likeCount);
+    }
+
+    //게시글 좋아요 취소
+    public BoardLikeResponse unlikeBoard(Long boardId, String accessToken) {
+
+        String loginId = JwtUtil.getLoginId(accessToken, secretKey);
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardNotFoundException("게시글 없음"));
+
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new RuntimeException("유저 없음"));
+
+        boardLikeRepository.deleteByBoardAndUser(board, user);
+        long likeCount = boardLikeRepository.countByBoard(board);
+        return new BoardLikeResponse(false, likeCount);
+    }
+
 }

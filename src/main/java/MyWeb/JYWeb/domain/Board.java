@@ -49,6 +49,13 @@ public class Board {
     @Column
     private LocalDateTime deletedAt;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardLike> likes = new ArrayList<>();
+
+    public int getLikeCount() {
+        return likes.size();
+    }
+
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = java.time.LocalDateTime.now();
