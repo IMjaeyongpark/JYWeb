@@ -233,6 +233,15 @@ public class BoardController {
         return ResponseEntity.ok("수정 완료");
     }
 
+
+    @Operation(
+            summary = "게시글 좋아요",
+            description = "JWT 토큰이 필요하며, 게시글 ID를 통해 특정 게시글의 좋아요를 추가합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "좋아요 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @PostMapping("/{boardId}/like")
     public ResponseEntity<BoardLikeResponse> likeBoard(@PathVariable("boardId") Long boardId, HttpServletRequest request){
 
@@ -251,6 +260,14 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "게시글 좋아요 취소",
+            description = "JWT 토큰이 필요하며, 게시글 ID를 통해 특정 게시글의 좋아요를 취소합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "좋아요 취소 성공"),
+                    @ApiResponse(responseCode = "401", description = "토큰 없음")
+            }
+    )
     @DeleteMapping("/{boardId}/like")
     public ResponseEntity<BoardLikeResponse> unlikeBoard(@PathVariable("boardId") Long boardId, HttpServletRequest request){
 
