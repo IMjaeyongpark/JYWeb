@@ -16,10 +16,27 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 
     //삭제되지 않은 게시물 가져오기
-    @Query("SELECT new MyWeb.JYWeb.DTO.board.BoardResponse(b.boardId, b.title, u.nickname, b.viewCount, b.createdAt) " +
-            "FROM Board b JOIN b.user u " +
-            "WHERE b.deletedAt IS NULL")
+    @Query("SELECT new MyWeb.JYWeb.DTO.board.BoardResponse(" +
+            "        b.boardId, b.title, u.nickname, b.viewCount, b.createdAt," +
+            "        (SELECT COUNT(bl) FROM BoardLike bl WHERE bl.board = b)" +
+            "    )" +
+            "    FROM Board b" +
+            "    JOIN b.user u" +
+            "    WHERE b.deletedAt IS NULL")
     Page<BoardResponse> findAllByDeletedAtIsNull(Pageable pageable);
+
+    //좋아요순 정렬
+    @Query("""
+    SELECT new MyWeb.JYWeb.DTO.board.BoardResponse(
+        b.boardId, b.title, u.nickname, b.viewCount, b.createdAt,
+        (SELECT COUNT(bl) FROM BoardLike bl WHERE bl.board = b)
+    )
+    FROM Board b
+    JOIN b.user u
+    WHERE b.deletedAt IS NULL
+    ORDER BY (SELECT COUNT(bl) FROM BoardLike bl WHERE bl.board = b) DESC
+""")
+    Page<BoardResponse> findAllByDeletedAtIsNullOrderByLike(Pageable pageable);
 
 
 

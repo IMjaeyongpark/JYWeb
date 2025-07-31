@@ -20,4 +20,6 @@ public class BoardResponse {
 
     private LocalDateTime createdAt;
 
+    private long likeCount;
+
 }

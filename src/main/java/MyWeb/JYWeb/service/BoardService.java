@@ -113,27 +113,24 @@ public class BoardService {
     //게시물 조회
     public Page<BoardResponse> getBoard(int pageNum, int pageSize, String sort, Sort.Direction dir) {
 
-
-        Pageable pageable;
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(dir, "createdAt")); // 기본값
+        Page<BoardResponse> boardResponses;
 
         switch (sort) {
             case "viewCount":
                 pageable = PageRequest.of(pageNum, pageSize, Sort.by(dir, "viewCount"));
+                boardResponses = boardRepository.findAllByDeletedAtIsNull(pageable);
                 break;
-//            case "popular":
-//                pageable = PageRequest.of(pageNum, pageSize, Sort.by(dir, "likeCount"));
-//                break;
+            case "likeCount":
+                boardResponses = boardRepository.findAllByDeletedAtIsNullOrderByLike(pageable);
+                break;
             default:
-                pageable = PageRequest.of(pageNum, pageSize, Sort.by(dir, "createdAt"));
+                boardResponses = boardRepository.findAllByDeletedAtIsNull(pageable);
                 break;
         }
-
-        //페이지 단위로 게시글 조회
-        Page<BoardResponse> boardResponses = boardRepository.findAllByDeletedAtIsNull(pageable);
-
-
         return boardResponses;
     }
+
 
     //게시물 내용 조회
     public BoardDetailResponse getBoardDetail(Long boardId, String accessToken) {
