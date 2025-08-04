@@ -1,6 +1,7 @@
 package MyWeb.JYWeb.service;
 
 import MyWeb.JYWeb.DTO.sporify.ArtistResponseDto;
+import MyWeb.JYWeb.DTO.sporify.TrackDto;
 import MyWeb.JYWeb.Util.SpotifyApiUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional
 @Slf4j
@@ -26,6 +30,47 @@ public class SpotifyService {
     @Value("${spotify.client-secret}")
     private String clientSecret;
 
+
+    public List<TrackDto> getTopChartTracks() {
+        String token = SpotifyApiUtil.getAccessToken(clientId, clientSecret);
+
+        String playlistId = "4cRo44TavIHN54w46OqRVc";
+        String url = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks?market=KR&limit=100";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        List<TrackDto> tracks = new ArrayList<>();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            JsonNode items = root.path("items");
+            for (JsonNode item : items) {
+                JsonNode track = item.path("track");
+                String title = track.path("name").asText();
+
+                StringBuilder artistBuilder = new StringBuilder();
+                for (JsonNode artistNode : track.path("artists")) {
+                    if (artistBuilder.length() > 0) artistBuilder.append(", ");
+                    artistBuilder.append(artistNode.path("name").asText());
+                }
+                String artist = artistBuilder.toString();
+
+                String imageUrl = "";
+                JsonNode images = track.path("album").path("images");
+                if (images.isArray() && images.size() > 0) {
+                    imageUrl = images.get(0).path("url").asText();
+                }
+                tracks.add(new TrackDto(title, artist, imageUrl));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tracks;
+    }
     public ArtistResponseDto searchArtist(String artistName) {
         //Access Token 발급
         String token = SpotifyApiUtil.getAccessToken(clientId, clientSecret);

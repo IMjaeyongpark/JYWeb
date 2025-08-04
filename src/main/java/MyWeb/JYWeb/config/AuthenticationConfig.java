@@ -36,7 +36,8 @@ public class AuthenticationConfig {
             "/board/getDetail",
             "/board/search",
             "/comment/get",
-            "/spotify/search"
+            "/spotify/search",
+            "/spotify/top-tracks"
     };
 
 

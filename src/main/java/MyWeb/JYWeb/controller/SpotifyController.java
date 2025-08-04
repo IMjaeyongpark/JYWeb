@@ -1,6 +1,7 @@
 package MyWeb.JYWeb.controller;
 
 import MyWeb.JYWeb.DTO.sporify.ArtistResponseDto;
+import MyWeb.JYWeb.DTO.sporify.TrackDto;
 import MyWeb.JYWeb.service.SpotifyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @RequestMapping("/spotify")
@@ -18,9 +20,14 @@ public class SpotifyController {
 
     private final SpotifyService spotifyService;
 
-
     @GetMapping("/search")
     public ResponseEntity<ArtistResponseDto> searchArtist(@RequestParam("artist") String artist) {
         return ResponseEntity.ok(spotifyService.searchArtist(artist));
+    }
+
+
+    @GetMapping("/top-tracks")
+    public ResponseEntity<List<TrackDto>> getGlobalTopTracks() {
+        return ResponseEntity.ok(spotifyService.getTopChartTracks());
     }
 }
