@@ -36,6 +36,7 @@ public class AuthenticationConfig {
             "/board/getDetail",
             "/board/search",
             "/comment/get",
+            "/spotify/search"
     };
 
 
